@@ -1,44 +1,66 @@
 import type { AiResults } from '@/types';
 
-const AI_PROMPT_TEMPLATE = `Sei "Jiraiya Sensei", un assistente per lo studio attivo da pagine di libri cartacei.
-Analizza il seguente testo e rispondi SOLO con JSON valido nel formato:
+const AI_PROMPT_TEMPLATE = `Agisci come un critico letterario e simbolico esperto, specializzato nell'analisi di testi narrativi brevi o estratti di opere letterarie, con competenze in interpretazione tematica, simbolica e filosofica.
+
+⸻ Task
+• Ricevere una storia o un estratto (in testo o immagini da trascrivere).
+• Fornire:
+  1. Trascrizione fedele (se fornita in immagini).
+  2. Sintesi concisa della trama.
+  3. Analisi simbolica di eventuali elementi chiave (oggetti, personaggi, luoghi, simboli, ecc.).
+  4. Interpretazione del significato profondo (livello filosofico/esistenziale).
+  5. Possibili lezioni applicabili alla vita quotidiana.
+
+⸻ Context
+• Il testo può contenere riferimenti culturali, storici, religiosi o artistici.
+• L'utente può voler collegare il significato della storia alla propria vita o a situazioni concrete.
+• È importante mantenere la trascrizione invariata, senza modificare o interpretare nella fase di copia.
+
+⸻ Reasoning
+• Trascrivere prima in modo fedele per garantire una base solida di analisi.
+• Identificare il filo narrativo principale e i concetti chiave.
+• Collegare elementi simbolici a significati condivisi (miti, archetipi, tarocchi, ecc.) e al contesto della storia.
+• Sviluppare l'analisi dal livello superficiale (trama) a quello profondo (significato universale), fino alla dimensione personale.
+• Assicurarsi che ogni affermazione interpretativa sia chiaramente distinta da ciò che è direttamente nel testo.
+
+⸻ Output format
+Restituisci l'analisi in formato JSON valido:
 
 {
-  "transcription": "<trascrizione fedele, eventualmente ripulita da OCR>",
-  "summaries": {
-    "tweet": "<max 280 caratteri>",
-    "paragraph": "<~150 parole>",
-    "bullets": ["punto 1", "punto 2", "punto 3", "..."]
+  "transcription": "<trascrizione fedele del testo, senza modifiche o interpretazioni>",
+  "plotSummary": "<sintesi concisa della trama in 100-150 parole>",
+  "symbolicAnalysis": {
+    "keyElements": [
+      {
+        "element": "<nome elemento simbolico>",
+        "description": "<descrizione nel testo>",
+        "symbolicMeaning": "<interpretazione simbolica>",
+        "culturalReferences": "<riferimenti culturali, mitologici, archetipici>"
+      }
+    ]
   },
-  "quiz": [
-    {
-      "question": "<domanda 1>",
-      "options": ["A", "B", "C", "D"],
-      "answerIndex": 0,
-      "explanation": "<perché la risposta è corretta>"
-    },
-    {
-      "question": "<domanda 2>",
-      "options": ["A", "B", "C", "D"],
-      "answerIndex": 2,
-      "explanation": "<spiegazione>"
-    },
-    {
-      "question": "<domanda 3>",
-      "options": ["A", "B", "C", "D"],
-      "answerIndex": 1,
-      "explanation": "<spiegazione>"
-    }
-  ],
-  "reflection": "Formula una domanda socratica personale (una sola frase, senza suggerire risposte).",
-  "flashcards": [
-    {"q": "<domanda breve 1>", "a": "<risposta breve 1>"},
-    {"q": "<domanda breve 2>", "a": "<risposta breve 2>"},
-    {"q": "<domanda breve 3>", "a": "<risposta breve 3>"},
-    {"q": "<domanda breve 4>", "a": "<risposta breve 4>"},
-    {"q": "<domanda breve 5>", "a": "<risposta breve 5>"}
-  ]
+  "deepMeaning": {
+    "philosophicalThemes": ["<tema 1>", "<tema 2>", "<tema 3>"],
+    "existentialInterpretation": "<significato profondo e universale>",
+    "universalTruths": "<verità universali emerse dal testo>"
+  },
+  "personalLesson": {
+    "mainInsight": "<lezione principale applicabile alla vita>",
+    "practicalApplications": [
+      "<applicazione pratica 1>",
+      "<applicazione pratica 2>",
+      "<applicazione pratica 3>"
+    ],
+    "reflectiveQuestion": "<domanda per l'auto-riflessione>"
+  }
 }
+
+⸻ Stop conditions
+Il compito è completato quando:
+• La storia è trascritta fedelmente (se era in immagine).
+• Sono fornite tutte le 5 sezioni nel formato richiesto.
+• L'analisi distingue chiaramente tra testo originale e interpretazioni.
+• Le lezioni personali sono formulate in modo concreto e applicabile.
 
 Testo da analizzare:
 {{TESTO}}`;
@@ -50,63 +72,50 @@ export const callAI = async (text: string, apiKey?: string): Promise<AiResults> 
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 2000));
   
-  // Mock response for demo purposes
+  // Mock response for demo purposes (literary analysis)
   const mockResponse: AiResults = {
     transcription: text,
-    summaries: {
-      tweet: "📚 Apprendimento attivo: trasforma ogni pagina in conoscenza applicabile. #StudyTips #Learning",
-      paragraph: "L'apprendimento attivo rappresenta un approccio pedagogico che enfatizza il coinvolgimento diretto dello studente nel processo di acquisizione della conoscenza. Attraverso tecniche come l'auto-interrogazione, la sintesi e l'applicazione pratica, gli studenti sviluppano una comprensione più profonda e duratura dei contenuti studiati. Questo metodo si contrappone all'apprendimento passivo tradizionale, promuovendo invece la partecipazione attiva e la riflessione critica.",
-      bullets: [
-        "L'apprendimento attivo coinvolge direttamente lo studente",
-        "Utilizza tecniche di auto-interrogazione e sintesi",
-        "Promuove comprensione profonda e duratura",
-        "Si oppone ai metodi passivi tradizionali",
-        "Enfatizza riflessione critica e applicazione pratica"
+    plotSummary: "La storia narra di un protagonista che attraversa un viaggio di trasformazione, incontrando ostacoli e alleati che lo guidano verso una comprensione più profonda di sé stesso e del mondo circostante. Gli eventi si susseguono in un crescendo drammatico che culmina in una rivelazione che cambia la percezione della realtà.",
+    symbolicAnalysis: {
+      keyElements: [
+        {
+          element: "Il Viaggio",
+          description: "Il percorso fisico o metaforico del protagonista",
+          symbolicMeaning: "Rappresenta l'evoluzione interiore e la ricerca di significato",
+          culturalReferences: "Archetipo del Hero's Journey di Campbell, miti omerici"
+        },
+        {
+          element: "La Soglia",
+          description: "Momento di passaggio o decisione cruciale",
+          symbolicMeaning: "Trasformazione, morte simbolica del vecchio sé",
+          culturalReferences: "Riti di passaggio, simbolismo degli archetipi junghiani"
+        },
+        {
+          element: "Il Mentore",
+          description: "Figura guida che appare nel momento del bisogno",
+          symbolicMeaning: "La saggezza interiore, la voce della coscienza superiore",
+          culturalReferences: "Archetipo del Saggio, tradizione dei maestri spirituali"
+        }
       ]
     },
-    quiz: [
-      {
-        question: "Qual è la caratteristica principale dell'apprendimento attivo?",
-        options: [
-          "Il coinvolgimento passivo dello studente",
-          "Il coinvolgimento diretto dello studente",
-          "L'uso esclusivo di libri di testo",
-          "La memorizzazione meccanica"
-        ],
-        answerIndex: 1,
-        explanation: "L'apprendimento attivo si basa sul coinvolgimento diretto e partecipativo dello studente nel processo di apprendimento."
-      },
-      {
-        question: "Quale tecnica NON è tipica dell'apprendimento attivo?",
-        options: [
-          "Auto-interrogazione",
-          "Sintesi personale",
-          "Memorizzazione passiva",
-          "Riflessione critica"
-        ],
-        answerIndex: 2,
-        explanation: "La memorizzazione passiva è caratteristica dell'apprendimento tradizionale, non di quello attivo."
-      },
-      {
-        question: "Che tipo di comprensione promuove l'apprendimento attivo?",
-        options: [
-          "Superficiale e temporanea",
-          "Profonda e duratura",
-          "Meccanica e ripetitiva",
-          "Teorica e astratta"
-        ],
-        answerIndex: 1,
-        explanation: "L'apprendimento attivo mira a sviluppare una comprensione profonda e duratura dei contenuti."
-      }
-    ],
-    reflection: "In che modo potresti applicare i principi dell'apprendimento attivo alla tua routine di studio quotidiana?",
-    flashcards: [
-      { q: "Cosa significa apprendimento attivo?", a: "Coinvolgimento diretto dello studente nel processo di apprendimento" },
-      { q: "Qual è l'opposto dell'apprendimento attivo?", a: "Apprendimento passivo tradizionale" },
-      { q: "Nome una tecnica di apprendimento attivo", a: "Auto-interrogazione" },
-      { q: "Che tipo di comprensione sviluppa?", a: "Profonda e duratura" },
-      { q: "Elemento chiave dell'approccio attivo", a: "Riflessione critica" }
-    ]
+    deepMeaning: {
+      philosophicalThemes: [
+        "La ricerca dell'identità autentica",
+        "Il confronto con l'ignoto e la paura",
+        "La trasformazione attraverso l'esperienza"
+      ],
+      existentialInterpretation: "Il testo esplora la condizione umana universale di crescita attraverso l'adversità, suggerendo che ogni sfida è un'opportunità di evoluzione spirituale e che la vera conoscenza nasce dall'esperienza diretta piuttosto che dall'apprendimento teorico.",
+      universalTruths: "La crescita richiede coraggio per lasciare la zona di comfort; la saggezza emerge dall'integrazione di esperienza e riflessione; ogni individuo possiede le risorse interiori necessarie per superare le proprie sfide."
+    },
+    personalLesson: {
+      mainInsight: "Ogni ostacolo nella vita è un'opportunità mascherata per sviluppare qualità interiori che non sapevamo di possedere.",
+      practicalApplications: [
+        "Affrontare le sfide quotidiane come occasioni di crescita personale",
+        "Cercare il significato profondo nelle esperienze difficili",
+        "Sviluppare la fiducia nelle proprie risorse interiori"
+      ],
+      reflectiveQuestion: "Quale sfida attuale nella tua vita potrebbe essere in realtà un invito a sviluppare una parte di te ancora inesplorata?"
+    }
   };
   
   return mockResponse;
@@ -116,23 +125,27 @@ export const validateAIResponse = (response: string): AiResults | null => {
   try {
     const parsed = JSON.parse(response);
     
-    // Validate structure
-    if (!parsed.transcription || !parsed.summaries || !parsed.quiz || !parsed.reflection || !parsed.flashcards) {
+    // Validate basic structure
+    if (!parsed.transcription || !parsed.plotSummary || !parsed.symbolicAnalysis || !parsed.deepMeaning || !parsed.personalLesson) {
       return null;
     }
     
-    // Validate summaries
-    if (!parsed.summaries.tweet || !parsed.summaries.paragraph || !Array.isArray(parsed.summaries.bullets)) {
+    // Validate symbolicAnalysis
+    if (!parsed.symbolicAnalysis.keyElements || !Array.isArray(parsed.symbolicAnalysis.keyElements)) {
       return null;
     }
     
-    // Validate quiz
-    if (!Array.isArray(parsed.quiz) || parsed.quiz.length !== 3) {
+    // Validate deepMeaning
+    if (!Array.isArray(parsed.deepMeaning.philosophicalThemes) || 
+        !parsed.deepMeaning.existentialInterpretation || 
+        !parsed.deepMeaning.universalTruths) {
       return null;
     }
     
-    // Validate flashcards
-    if (!Array.isArray(parsed.flashcards) || parsed.flashcards.length !== 5) {
+    // Validate personalLesson
+    if (!parsed.personalLesson.mainInsight || 
+        !Array.isArray(parsed.personalLesson.practicalApplications) || 
+        !parsed.personalLesson.reflectiveQuestion) {
       return null;
     }
     

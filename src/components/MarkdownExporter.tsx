@@ -20,7 +20,7 @@ export const MarkdownExporter: React.FC<MarkdownExporterProps> = ({
   const generateMarkdown = (): string => {
     if (!results) return '';
 
-    const markdown = `# 📚 Analisi Jiraiya Sensei
+    const markdown = `# 📚 Analisi Letteraria di Jiraiya Sensei
 
 ## ✍️ Trascrizione
 
@@ -28,52 +28,58 @@ ${transcription}
 
 ---
 
-## 📝 Sintesi
+## 📖 Sintesi della Trama
 
-### 🐦 Tweet
-${results.summaries.tweet}
-
-### 📄 Paragrafo
-${results.summaries.paragraph}
-
-### 📋 Schema Puntato
-${results.summaries.bullets.map(bullet => `- ${bullet}`).join('\n')}
+${results.plotSummary}
 
 ---
 
-## 🧠 Quiz di Comprensione
+## 🔍 Analisi Simbolica
 
-${results.quiz.map((q, index) => `
-### Domanda ${index + 1}
-**${q.question}**
+### Elementi Simbolici Chiave
 
-${q.options.map((option, optIndex) => `${String.fromCharCode(65 + optIndex)}. ${option}`).join('\n')}
+${results.symbolicAnalysis.keyElements.map(element => `
+#### ${element.element}
 
-**Risposta:** ${String.fromCharCode(65 + q.answerIndex)} - ${q.options[q.answerIndex]}
-**Spiegazione:** ${q.explanation}
+**Nel testo:** "${element.description}"
+
+**Significato simbolico:** ${element.symbolicMeaning}
+
+**Riferimenti culturali:** ${element.culturalReferences}
 `).join('\n')}
 
 ---
 
-## 🤔 Riflessione Socratica
+## 🧠 Significato Profondo
 
-> ${results.reflection}
+### Temi Filosofici
+${results.deepMeaning.philosophicalThemes.map(theme => `- ${theme}`).join('\n')}
+
+### Interpretazione Esistenziale
+${results.deepMeaning.existentialInterpretation}
+
+### Verità Universali
+${results.deepMeaning.universalTruths}
+
+---
+
+## 💡 Lezione Personale
+
+### Insight Principale
+${results.personalLesson.mainInsight}
+
+### Applicazioni Pratiche
+${results.personalLesson.practicalApplications.map((app, index) => `${index + 1}. ${app}`).join('\n')}
+
+### Domanda Riflessiva
+> ${results.personalLesson.reflectiveQuestion}
 
 _Spazio per la tua riflessione personale:_
 
 ---
 
-## 🗃️ Flashcard
-
-${results.flashcards.map((card, index) => `
-### Card ${index + 1}
-**Q:** ${card.q}
-**A:** ${card.a}
-`).join('\n')}
-
----
-
-*Generato da Jiraiya Sensei - ${new Date().toLocaleDateString('it-IT')}*
+*Analisi generata da Jiraiya Sensei - Critico Letterario e Simbolico*  
+*${new Date().toLocaleDateString('it-IT')}*
 `;
 
     return markdown.trim();
@@ -96,7 +102,7 @@ ${results.flashcards.map((card, index) => `
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `jiraiya-sensei-analisi-${new Date().toISOString().split('T')[0]}.md`;
+    a.download = `jiraiya-sensei-analisi-letteraria-${new Date().toISOString().split('T')[0]}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -120,7 +126,7 @@ ${results.flashcards.map((card, index) => `
       <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            📋 Esporta Analisi Completa
+            📋 Esporta Analisi Letteraria Completa
           </DialogTitle>
         </DialogHeader>
         
@@ -144,7 +150,7 @@ ${results.flashcards.map((card, index) => `
               className="bg-gradient-sensei hover:shadow-warm"
             >
               <Download className="w-4 h-4 mr-2" />
-              Scarica File
+              Scarica Analisi
             </Button>
           </div>
           
@@ -152,11 +158,11 @@ ${results.flashcards.map((card, index) => `
             value={generateMarkdown()}
             readOnly
             className="flex-1 font-mono text-xs resize-none"
-            placeholder="Il markdown dell'analisi apparirà qui..."
+            placeholder="L'analisi letteraria completa apparirà qui..."
           />
           
           <p className="text-xs text-muted-foreground text-center">
-            💡 Puoi copiare il markdown o scaricarlo come file .md
+            💡 Puoi copiare l'analisi letteraria o scaricarla come file .md
           </p>
         </div>
       </DialogContent>

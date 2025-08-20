@@ -8,29 +8,29 @@ export interface Page {
   progress?: number;
 }
 
-export interface QuizQuestion {
-  question: string;
-  options: string[];
-  answerIndex: number;
-  explanation: string;
-  userAnswer?: number;
-}
-
-export interface Flashcard {
-  q: string;
-  a: string;
+export interface SymbolicElement {
+  element: string;
+  description: string;
+  symbolicMeaning: string;
+  culturalReferences: string;
 }
 
 export interface AiResults {
   transcription: string;
-  summaries: {
-    tweet: string;
-    paragraph: string;
-    bullets: string[];
+  plotSummary: string;
+  symbolicAnalysis: {
+    keyElements: SymbolicElement[];
   };
-  quiz: QuizQuestion[];
-  reflection: string;
-  flashcards: Flashcard[];
+  deepMeaning: {
+    philosophicalThemes: string[];
+    existentialInterpretation: string;
+    universalTruths: string;
+  };
+  personalLesson: {
+    mainInsight: string;
+    practicalApplications: string[];
+    reflectiveQuestion: string;
+  };
 }
 
 export interface AppState {
@@ -41,7 +41,7 @@ export interface AppState {
     isProcessingOCR: boolean;
     isCallingAI: boolean;
     apiKey?: string;
-    activeTab: 'summaries' | 'quiz' | 'reflection' | 'flashcards';
+    activeTab: 'plot' | 'symbolic' | 'meaning' | 'lesson';
     draggedPage?: string;
   };
 }

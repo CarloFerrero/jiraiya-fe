@@ -102,7 +102,7 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
           value={text}
           onChange={(e) => onTextChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Il testo OCR unito apparirà qui. Puoi modificarlo prima di inviarlo a Jiraiya Sensei per l'analisi."
+          placeholder="Il testo OCR unito apparirà qui. Puoi modificarlo prima di inviarlo a Jiraiya Sensei per l'analisi letteraria e simbolica."
           className="min-h-[200px] resize-none border-0 p-0 focus-visible:ring-0 bg-transparent"
           style={{ height: 'auto' }}
         />
@@ -153,18 +153,18 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
           ) : (
             <Wand2 className="w-5 h-5 mr-2" />
           )}
-          {isAnalyzing ? 'Jiraiya Sensei sta analizzando...' : '🧙‍♂️ Analizza con Sensei'}
+          {isAnalyzing ? 'Jiraiya Sensei sta analizzando il testo...' : '📖 Analizza con Sensei Critico'}
         </Button>
         
         {!canAnalyze && (
           <p className="text-sm text-muted-foreground text-center">
-            Inserisci del testo per attivare l'analisi
+            Inserisci del testo per attivare l'analisi letteraria
           </p>
         )}
         
         {canAnalyze && !isAnalyzing && (
           <p className="text-xs text-muted-foreground text-center">
-            💡 Suggerimento: usa Cmd/Ctrl + Enter per analizzare rapidamente
+            💡 Suggerimento: usa Cmd/Ctrl + Enter per avviare l'analisi letteraria
           </p>
         )}
       </div>

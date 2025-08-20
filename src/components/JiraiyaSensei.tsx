@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { Dropzone } from './Dropzone';
 import { PageList } from './PageList';
 import { TranscriptEditor } from './TranscriptEditor';
-import { AiResultsTabs } from './AiResultsTabs';
+import { LiteraryAnalysisTabs } from './LiteraryAnalysisTabs';
 import { MarkdownExporter } from './MarkdownExporter';
 import { processImageOCR } from '@/utils/ocr';
 import { callAI, validateAIResponse } from '@/utils/ai';
@@ -18,7 +18,7 @@ export const JiraiyaSensei: React.FC = () => {
     ui: {
       isProcessingOCR: false,
       isCallingAI: false,
-      activeTab: 'summaries'
+      activeTab: 'plot'
     }
   });
 
@@ -162,13 +162,13 @@ export const JiraiyaSensei: React.FC = () => {
 
       if (validatedResults) {
         setState(prev => ({ ...prev, aiResults: validatedResults }));
-        toast.success('🧙‍♂️ Analisi completata da Jiraiya Sensei!');
+        toast.success('🧙‍♂️ Analisi letteraria completata da Jiraiya Sensei!');
       } else {
         throw new Error('Invalid AI response format');
       }
     } catch (error) {
       console.error('AI analysis failed:', error);
-      toast.error('❌ Errore durante l\'analisi AI');
+      toast.error('❌ Errore durante l\'analisi letteraria AI');
     } finally {
       setState(prev => ({ ...prev, ui: { ...prev.ui, isCallingAI: false } }));
     }
@@ -198,7 +198,7 @@ export const JiraiyaSensei: React.FC = () => {
                     Jiraiya Sensei
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    Web MVP - OCR e Analisi AI per Studio Attivo
+                    Critico Letterario e Simbolico - Analisi AI Avanzata
                   </p>
                 </div>
               </div>
@@ -246,10 +246,10 @@ export const JiraiyaSensei: React.FC = () => {
               />
             </div>
 
-            {/* Right - AI Results */}
+            {/* Right - Literary Analysis */}
             <div className="bg-card rounded-lg border shadow-card p-6">
               {state.aiResults ? (
-                <AiResultsTabs
+                <LiteraryAnalysisTabs
                   results={state.aiResults}
                   activeTab={state.ui.activeTab}
                   onTabChange={(tab) => setState(prev => ({
@@ -260,11 +260,11 @@ export const JiraiyaSensei: React.FC = () => {
               ) : (
                 <div className="text-center py-12 text-muted-foreground">
                   <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
-                    <span className="text-2xl">🧙‍♂️</span>
+                    <span className="text-2xl">📖</span>
                   </div>
                   <h3 className="text-lg font-medium mb-2">In attesa di analisi</h3>
                   <p className="text-sm">
-                    Carica le pagine, unisci il testo e clicca "Analizza con Sensei" per vedere i risultati qui.
+                    Carica le pagine, unisci il testo e clicca "Analizza con Sensei" per vedere l'analisi letteraria e simbolica qui.
                   </p>
                 </div>
               )}
