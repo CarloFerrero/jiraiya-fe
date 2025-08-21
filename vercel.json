@@ -35,16 +35,5 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ],
-  "functions": {
-    "src/**/*.ts": {
-      "maxDuration": 30
-    }
-  },
-  "build": {
-    "env": {
-      "VITE_ENABLE_SECURITY_HEADERS": "true",
-      "VITE_ENABLE_CSP": "true"
-    }
-  }
+  ]
 }
