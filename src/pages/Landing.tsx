@@ -512,55 +512,55 @@ const Landing: React.FC = () => {
               </div>
 
               <div className="relative">
-                {/* Timeline Line */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 rounded-full"></div>
+                {/* Timeline Line - Hidden on mobile, visible on desktop */}
+                <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 rounded-full"></div>
 
                 {/* Phase 1 - Current */}
-                <div className="relative mb-16 timeline-item">
-                  <div className="flex items-center">
-                    <div className="w-1/2 pr-8 text-right">
-                      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg border border-blue-200 dark:border-blue-800 roadmap-card">
-                        <div className="flex items-center justify-end gap-3 mb-3">
+                <div className="relative mb-8 md:mb-16 timeline-item">
+                  <div className="flex flex-col md:flex-row items-center">
+                    <div className="w-full md:w-1/2 md:pr-8 md:text-right mb-4 md:mb-0">
+                      <div className="bg-white dark:bg-slate-800 rounded-lg p-4 md:p-6 shadow-lg border border-blue-200 dark:border-blue-800 roadmap-card">
+                        <div className="flex items-center justify-center md:justify-end gap-3 mb-3">
                           <Badge className="bg-blue-500 text-white">Fase 1</Badge>
                           <span className="text-sm text-muted-foreground">Q1 2024</span>
                         </div>
-                        <h4 className="text-lg font-semibold mb-2">Versione Beta</h4>
+                        <h4 className="text-lg font-semibold mb-2 text-center md:text-left">Versione Beta</h4>
                         <ul className="text-sm text-muted-foreground space-y-1">
                           <li>• OCR intelligente per immagini</li>
                           <li>• Analisi letteraria AI avanzata</li>
                           <li>• Quiz interattivi generati automaticamente</li>
                           <li>• Export in formato Markdown</li>
                         </ul>
-                        <div className="mt-4 flex items-center justify-end gap-2">
+                        <div className="mt-4 flex items-center justify-center md:justify-end gap-2">
                           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                           <span className="text-xs text-green-600 font-medium">Completato</span>
                         </div>
                       </div>
                     </div>
                     <div className="w-4 h-4 bg-blue-500 rounded-full border-4 border-white dark:border-slate-800 shadow-lg z-10 timeline-dot"></div>
-                    <div className="w-1/2 pl-8"></div>
+                    <div className="w-full md:w-1/2 md:pl-8"></div>
                   </div>
                 </div>
 
                 {/* Phase 2 - Authentication */}
-                <div className="relative mb-16 timeline-item">
-                  <div className="flex items-center">
-                    <div className="w-1/2 pr-8"></div>
+                <div className="relative mb-8 md:mb-16 timeline-item">
+                  <div className="flex flex-col md:flex-row items-center">
+                    <div className="w-full md:w-1/2 md:pr-8 hidden md:block"></div>
                     <div className="w-4 h-4 bg-purple-500 rounded-full border-4 border-white dark:border-slate-800 shadow-lg z-10 timeline-dot"></div>
-                    <div className="w-1/2 pl-8">
-                      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg border border-purple-200 dark:border-purple-800 roadmap-card">
-                        <div className="flex items-center gap-3 mb-3">
+                    <div className="w-full md:w-1/2 md:pl-8 mt-4 md:mt-0">
+                      <div className="bg-white dark:bg-slate-800 rounded-lg p-4 md:p-6 shadow-lg border border-purple-200 dark:border-purple-800 roadmap-card">
+                        <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
                           <Badge className="bg-purple-500 text-white">Fase 2</Badge>
                           <span className="text-sm text-muted-foreground">Q2 2024</span>
                         </div>
-                        <h4 className="text-lg font-semibold mb-2">Sistema di Autenticazione</h4>
+                        <h4 className="text-lg font-semibold mb-2 text-center md:text-left">Sistema di Autenticazione</h4>
                         <ul className="text-sm text-muted-foreground space-y-1">
                           <li>• Registrazione e login utenti</li>
                           <li>• Profili personalizzati</li>
                           <li>• Salvataggio analisi</li>
                           <li>• Dashboard utente</li>
                         </ul>
-                        <div className="mt-4 flex items-center gap-2">
+                        <div className="mt-4 flex items-center justify-center md:justify-start gap-2">
                           <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
                           <span className="text-xs text-yellow-600 font-medium">In Sviluppo</span>
                         </div>
@@ -570,66 +570,66 @@ const Landing: React.FC = () => {
                 </div>
 
                 {/* Phase 3 - Teacher Features */}
-                <div className="relative mb-16 timeline-item">
-                  <div className="flex items-center">
-                    <div className="w-1/2 pr-8 text-right">
-                      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg border border-green-200 dark:border-green-800 roadmap-card">
-                        <div className="flex items-center justify-end gap-3 mb-3">
+                <div className="relative mb-8 md:mb-16 timeline-item">
+                  <div className="flex flex-col md:flex-row items-center">
+                    <div className="w-full md:w-1/2 md:pr-8 md:text-right mb-4 md:mb-0">
+                      <div className="bg-white dark:bg-slate-800 rounded-lg p-4 md:p-6 shadow-lg border border-green-200 dark:border-green-800 roadmap-card">
+                        <div className="flex items-center justify-center md:justify-end gap-3 mb-3">
                           <Badge className="bg-green-500 text-white">Fase 3</Badge>
                           <span className="text-sm text-muted-foreground">Q3 2024</span>
                         </div>
-                        <h4 className="text-lg font-semibold mb-2">Piattaforma Educativa</h4>
+                        <h4 className="text-lg font-semibold mb-2 text-center md:text-left">Piattaforma Educativa</h4>
                         <ul className="text-sm text-muted-foreground space-y-1">
                           <li>• Gestione classi per insegnanti</li>
                           <li>• Assegnazione letture</li>
                           <li>• Monitoraggio progressi studenti</li>
                           <li>• Dashboard analitiche</li>
                         </ul>
-                        <div className="mt-4 flex items-center justify-end gap-2">
+                        <div className="mt-4 flex items-center justify-center md:justify-end gap-2">
                           <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
                           <span className="text-xs text-gray-500 font-medium">Pianificato</span>
                         </div>
                       </div>
                     </div>
                     <div className="w-4 h-4 bg-green-500 rounded-full border-4 border-white dark:border-slate-800 shadow-lg z-10 timeline-dot"></div>
-                    <div className="w-1/2 pl-8"></div>
+                    <div className="w-full md:w-1/2 md:pl-8"></div>
                   </div>
                 </div>
               </div>
 
               {/* Investment Highlights */}
-              <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                 <Card className="border-none shadow-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 investment-highlight">
-                  <CardContent className="p-6 text-center">
-                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Users className="w-6 h-6 text-white" />
+                  <CardContent className="p-4 md:p-6 text-center">
+                    <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                      <Users className="w-5 h-5 md:w-6 md:h-6 text-white" />
                     </div>
-                    <h4 className="font-semibold mb-2">Mercato Target</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <h4 className="font-semibold mb-2 text-sm md:text-base">Mercato Target</h4>
+                    <p className="text-xs md:text-sm text-muted-foreground">
                       Insegnanti, studenti e appassionati di letteratura - mercato globale in crescita
                     </p>
                   </CardContent>
                 </Card>
 
                 <Card className="border-none shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/20 dark:to-purple-900/20 investment-highlight">
-                  <CardContent className="p-6 text-center">
-                    <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <TrendingUp className="w-6 h-6 text-white" />
+                  <CardContent className="p-4 md:p-6 text-center">
+                    <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                      <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-white" />
                     </div>
-                    <h4 className="font-semibold mb-2">Modello di Business</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <h4 className="font-semibold mb-2 text-sm md:text-base">Modello di Business</h4>
+                    <p className="text-xs md:text-sm text-muted-foreground">
                       Freemium + abbonamenti premium + licenze istituzionali
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-none shadow-lg bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 investment-highlight">
-                  <CardContent className="p-6 text-center">
-                    <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Zap className="w-6 h-6 text-white" />
+                <Card className="border-none shadow-lg bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 investment-highlight sm:col-span-2 lg:col-span-1">
+                  <CardContent className="p-4 md:p-6 text-center">
+                    <div className="w-10 h-10 md:w-12 md:h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                      <Zap className="w-5 h-5 md:w-6 md:h-6 text-white" />
                     </div>
-                    <h4 className="font-semibold mb-2">Tecnologia</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <h4 className="font-semibold mb-2 text-sm md:text-base">Tecnologia</h4>
+                    <p className="text-xs md:text-sm text-muted-foreground">
                       AI avanzata, OCR intelligente
                     </p>
                   </CardContent>
