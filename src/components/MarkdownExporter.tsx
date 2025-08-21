@@ -116,14 +116,13 @@ _Spazio per la tua riflessione personale:_
       <DialogTrigger asChild>
         <Button 
           className="bg-gradient-sensei hover:shadow-warm transition-all duration-300"
-          size="lg"
+          size="sm"
         >
-          <Download className="w-4 h-4 mr-2" />
-          📋 Esporta Markdown
+          <Download className="w-2 h-4" />
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+      <DialogContent className="max-w-4xl flex flex-col h-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             📋 Esporta Analisi Letteraria Completa
@@ -138,11 +137,10 @@ _Spazio per la tua riflessione personale:_
               className="hover:bg-accent"
             >
               {isCopied ? (
-                <Check className="w-4 h-4 mr-2 text-success" />
+                <Check className="w-4 h-4 text-success" />
               ) : (
-                <Copy className="w-4 h-4 mr-2" />
+                <Copy className="w-4 h-4" />
               )}
-              {isCopied ? 'Copiato!' : 'Copia Markdown'}
             </Button>
             
             <Button 

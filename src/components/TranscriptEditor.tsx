@@ -1,11 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Wand2, RotateCcw, Copy, Check, Loader } from 'lucide-react';
+import {
+  Wand2,
+  RotateCcw,
+  Copy,
+  Check,
+  Maximize2,
+  Type,
+  FileText
+} from 'lucide-react';
 import { cleanOCRText, estimateTokens } from '@/utils/ocr';
 import { cn } from '@/lib/utils';
+import { FullScreenEditor } from './FullScreenEditor';
 
 interface TranscriptEditorProps {
   text: string;
@@ -13,6 +21,7 @@ interface TranscriptEditorProps {
   onAnalyze: () => void;
   isAnalyzing: boolean;
   canAnalyze: boolean;
+  fullScreen?: boolean;
 }
 
 export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
@@ -20,9 +29,11 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
   onTextChange,
   onAnalyze,
   isAnalyzing,
-  canAnalyze
+  canAnalyze,
+  fullScreen = false
 }) => {
   const [isCopied, setIsCopied] = useState(false);
+  const [isFullScreenOpen, setIsFullScreenOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleCleanText = () => {
@@ -53,121 +64,148 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
   const estimatedTokens = estimateTokens(text);
 
+  // Auto-resize per la textarea normale
   useEffect(() => {
-    if (textareaRef.current) {
+    if (textareaRef.current && !fullScreen) {
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 400)}px`;
     }
-  }, [text]);
+  }, [text, fullScreen]);
+
+  const getQualityBadge = () => {
+    if (wordCount < 10) return <Badge variant="destructive" className="text-xs">Troppo breve</Badge>;
+    if (wordCount < 50) return <Badge variant="secondary" className="text-xs">Breve</Badge>;
+    if (wordCount < 200) return <Badge variant="default" className="text-xs">Ideale</Badge>;
+    return <Badge variant="outline" className="text-xs">Lungo</Badge>;
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          ✍️ Trascrizione
-        </h2>
-        
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCleanText}
-            disabled={!text.trim()}
-            className="hover:bg-accent"
-          >
-            <RotateCcw className="w-3 h-3 mr-1" />
-            Pulizia OCR
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopyText}
-            disabled={!text.trim()}
-            className="hover:bg-accent"
-          >
-            {isCopied ? (
-              <Check className="w-3 h-3 mr-1 text-success" />
-            ) : (
-              <Copy className="w-3 h-3 mr-1" />
-            )}
-            {isCopied ? 'Copiato!' : 'Copia'}
-          </Button>
-        </div>
-      </div>
+    <>
+      <div className="space-y-4">
+        {/* Header compatto */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Type className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm font-medium">Editor di Testo</span>
+            {text.trim() && getQualityBadge()}
+          </div>
 
-      <div className="border border-border rounded-lg p-4 bg-card">
-        <Textarea
-          ref={textareaRef}
-          value={text}
-          onChange={(e) => onTextChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Il testo OCR unito apparirà qui. Puoi modificarlo prima di inviarlo a Jiraiya Sensei per l'analisi letteraria e simbolica."
-          className="min-h-[200px] resize-none border-0 p-0 focus-visible:ring-0 bg-transparent"
-          style={{ height: 'auto' }}
-        />
-      </div>
+          {/* Toolbar compatto */}
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCleanText}
+              disabled={!text.trim()}
+              title="Formatta testo"
+              className="h-8 w-8 p-0"
+            >
+              <RotateCcw className="w-3 h-3" />
+            </Button>
 
-      {/* Statistics */}
-      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-        <div className="flex items-center gap-1">
-          <span>Caratteri:</span>
-          <Badge variant="secondary" className="font-mono">
-            {characterCount.toLocaleString()}
-          </Badge>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCopyText}
+              disabled={!text.trim()}
+              title="Copia tutto"
+              className="h-8 w-8 p-0"
+            >
+              {isCopied ? (
+                <Check className="w-3 h-3 text-green-600" />
+              ) : (
+                <Copy className="w-3 h-3" />
+              )}
+            </Button>
+
+            <div className="w-px h-4 bg-border mx-1" />
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsFullScreenOpen(true)}
+              title="Editor fullscreen"
+              className="h-8 w-8 p-0"
+            >
+              <Maximize2 className="w-3 h-3" />
+            </Button>
+          </div>
         </div>
-        
-        <div className="flex items-center gap-1">
-          <span>Parole:</span>
-          <Badge variant="secondary" className="font-mono">
-            {wordCount.toLocaleString()}
-          </Badge>
-        </div>
-        
-        <div className="flex items-center gap-1">
-          <span>Token stimati:</span>
-          <Badge 
-            variant="secondary" 
+
+        {/* Stats rapide */}
+        {text.trim() && (
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <FileText className="w-3 h-3" />
+              <span>{wordCount} parole</span>
+            </div>
+            <div className="hidden sm:block">{characterCount} caratteri</div>
+            <div className="hidden md:block">{estimatedTokens} token</div>
+          </div>
+        )}
+
+        {/* Editor area */}
+        <div className={cn(
+          "border border-border rounded-lg bg-card overflow-hidden",
+          fullScreen ? "h-[calc(100vh-20rem)]" : ""
+        )}>
+          <Textarea
+            ref={textareaRef}
+            value={text}
+            onChange={(e) => onTextChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Il testo OCR unito apparirà qui. Puoi modificarlo o cliccare sull'icona fullscreen per un editing avanzato."
             className={cn(
-              "font-mono",
-              estimatedTokens > 4000 && "bg-destructive/20 text-destructive"
+              "resize-none border-0 p-4 focus-visible:ring-0 bg-transparent text-sm leading-relaxed",
+              fullScreen
+                ? "min-h-[calc(100vh-25rem)]"
+                : "min-h-[200px] max-h-[400px]"
             )}
-          >
-            ~{estimatedTokens.toLocaleString()}
-          </Badge>
+            style={{ height: fullScreen ? '100%' : 'auto' }}
+          />
         </div>
+
+        {/* Quick actions */}
+        {text.trim() && canAnalyze && (
+          <div className="flex items-center justify-between pt-2 border-t">
+            <div className="text-xs text-muted-foreground">
+              💡 Usa <kbd className="px-1 py-0.5 text-xs border rounded">Ctrl+Enter</kbd> per analizzare
+            </div>
+
+            <Button
+              onClick={onAnalyze}
+              disabled={!canAnalyze || isAnalyzing}
+              size="sm"
+              variant="secondary"
+            >
+              {isAnalyzing ? (
+                <>
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current mr-2" />
+                  <span className="hidden sm:inline">Analizzando...</span>
+                  <span className="sm:hidden">...</span>
+                </>
+              ) : (
+                <>
+                  <Wand2 className="w-3 h-3 mr-2" />
+                  <span className="hidden sm:inline">Analizza con Jiraiya</span>
+                  <span className="sm:hidden">Analizza</span>
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </div>
 
-      <Separator />
-
-      {/* Analyze Button */}
-      <div className="flex flex-col items-center gap-2">
-        <Button
-          onClick={onAnalyze}
-          disabled={!canAnalyze || isAnalyzing}
-          className="bg-gradient-sensei hover:shadow-warm transition-all duration-300 text-lg py-6 px-8"
-          size="lg"
-        >
-          {isAnalyzing ? (
-            <Loader className="w-5 h-5 mr-2 animate-spin" />
-          ) : (
-            <Wand2 className="w-5 h-5 mr-2" />
-          )}
-          {isAnalyzing ? 'Jiraiya Sensei sta analizzando il testo...' : '📖 Analizza con Sensei Critico'}
-        </Button>
-        
-        {!canAnalyze && (
-          <p className="text-sm text-muted-foreground text-center">
-            Inserisci del testo per attivare l'analisi letteraria
-          </p>
-        )}
-        
-        {canAnalyze && !isAnalyzing && (
-          <p className="text-xs text-muted-foreground text-center">
-            💡 Suggerimento: usa Cmd/Ctrl + Enter per avviare l'analisi letteraria
-          </p>
-        )}
-      </div>
-    </div>
+      {/* Modal FullScreen */}
+      <FullScreenEditor
+        isOpen={isFullScreenOpen}
+        onClose={() => setIsFullScreenOpen(false)}
+        text={text}
+        onSave={onTextChange}
+        onAnalyze={onAnalyze}
+        isAnalyzing={isAnalyzing}
+        canAnalyze={canAnalyze}
+      />
+    </>
   );
 };

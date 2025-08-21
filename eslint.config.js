@@ -24,6 +24,17 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       "@typescript-eslint/no-unused-vars": "off",
+      
+      // Security rules
+      "no-eval": "error",
+      "no-implied-eval": "error",
+      "no-new-func": "error",
+      "no-script-url": "error",
+      "no-unsafe-finally": "error",
+      "require-atomic-updates": "error",
+      
+      // TypeScript security (basic rules)
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   }
 );

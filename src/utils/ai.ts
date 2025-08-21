@@ -1,156 +1,540 @@
 import type { AiResults } from '@/types';
+import { OPENAI_CONFIG, OPENAI_ERRORS } from '@/config/openai';
 
-const AI_PROMPT_TEMPLATE = `Agisci come un critico letterario e simbolico esperto, specializzato nell'analisi di testi narrativi brevi o estratti di opere letterarie, con competenze in interpretazione tematica, simbolica e filosofica.
+// Cache semplice per evitare di ri-analizzare lo stesso testo
+const analysisCache = new Map<string, AiResults>();
 
-⸻ Task
-• Ricevere una storia o un estratto (in testo o immagini da trascrivere).
-• Fornire:
-  1. Trascrizione fedele (se fornita in immagini).
-  2. Sintesi concisa della trama.
-  3. Analisi simbolica di eventuali elementi chiave (oggetti, personaggi, luoghi, simboli, ecc.).
-  4. Interpretazione del significato profondo (livello filosofico/esistenziale).
-  5. Possibili lezioni applicabili alla vita quotidiana.
+// Prompt per l'analisi letteraria
+const LITERARY_ANALYSIS_PROMPT = `Sei un critico letterario e simbolico di livello mondiale, specializzato nell'analisi profonda di testi narrativi. La tua competenza include interpretazione tematica, simbolica, filosofica e psicologica.
 
-⸻ Context
-• Il testo può contenere riferimenti culturali, storici, religiosi o artistici.
-• L'utente può voler collegare il significato della storia alla propria vita o a situazioni concrete.
-• È importante mantenere la trascrizione invariata, senza modificare o interpretare nella fase di copia.
+⸻ MISSIONE
+Analizza il testo fornito fornendo un'interpretazione completa e approfondita che includa:
+1. Sintesi narrativa accurata e coinvolgente
+2. Analisi simbolica dettagliata degli elementi chiave
+3. Interpretazione filosofica ed esistenziale profonda
+4. Lezioni di vita concrete e applicabili
 
-⸻ Reasoning
-• Trascrivere prima in modo fedele per garantire una base solida di analisi.
-• Identificare il filo narrativo principale e i concetti chiave.
-• Collegare elementi simbolici a significati condivisi (miti, archetipi, tarocchi, ecc.) e al contesto della storia.
-• Sviluppare l'analisi dal livello superficiale (trama) a quello profondo (significato universale), fino alla dimensione personale.
-• Assicurarsi che ogni affermazione interpretativa sia chiaramente distinta da ciò che è direttamente nel testo.
+⸻ METODOLOGIA
+• **Approccio sistematico**: Analizza ogni elemento con precisione accademica
+• **Collegamenti culturali**: Identifica riferimenti a miti, archetipi, simboli universali
+• **Livelli di significato**: Dal letterale al simbolico, dal filosofico al personale
+• **Evidenza testuale**: Ogni interpretazione deve essere supportata dal testo
 
-⸻ Output format
-Restituisci l'analisi in formato JSON valido:
+⸻ STANDARD DI QUALITÀ
+• **Completezza**: Analizza tutti gli elementi significativi
+• **Profondità**: Vai oltre la superficie, esplora i significati nascosti
+• **Chiarezza**: Usa un linguaggio accessibile ma sofisticato
+• **Applicabilità**: Rendi le lezioni concrete e utilizzabili
+
+⸻ OUTPUT FORMAT
+Restituisci l'analisi in formato JSON con questa struttura esatta:
 
 {
-  "transcription": "<trascrizione fedele del testo, senza modifiche o interpretazioni>",
-  "plotSummary": "<sintesi concisa della trama in 100-150 parole>",
+  "plotSummary": "Sintesi narrativa dettagliata (3-4 frasi) che catturi l'essenza della storia, i personaggi principali e la progressione degli eventi",
   "symbolicAnalysis": {
     "keyElements": [
       {
-        "element": "<nome elemento simbolico>",
-        "description": "<descrizione nel testo>",
-        "symbolicMeaning": "<interpretazione simbolica>",
-        "culturalReferences": "<riferimenti culturali, mitologici, archetipici>"
+        "element": "Nome specifico dell'elemento simbolico",
+        "description": "Descrizione dettagliata di come appare nel testo",
+        "symbolicMeaning": "Interpretazione simbolica approfondita con riferimenti archetipici",
+        "culturalReferences": "Riferimenti specifici a miti, religioni, culture, opere d'arte o letteratura"
       }
     ]
   },
   "deepMeaning": {
-    "philosophicalThemes": ["<tema 1>", "<tema 2>", "<tema 3>"],
-    "existentialInterpretation": "<significato profondo e universale>",
-    "universalTruths": "<verità universali emerse dal testo>"
+    "philosophicalThemes": ["Tema filosofico 1", "Tema filosofico 2", "Tema filosofico 3", "Tema filosofico 4"],
+    "existentialInterpretation": "Interpretazione esistenziale approfondita che esplora il significato umano universale del testo",
+    "universalTruths": "Verdà universali e principi fondamentali espressi dal testo"
   },
   "personalLesson": {
-    "mainInsight": "<lezione principale applicabile alla vita>",
-    "practicalApplications": [
-      "<applicazione pratica 1>",
-      "<applicazione pratica 2>",
-      "<applicazione pratica 3>"
-    ],
-    "reflectiveQuestion": "<domanda per l'auto-riflessione>"
+    "mainInsight": "Principale lezione di vita, formulata in modo chiaro e memorabile",
+    "practicalApplications": ["Applicazione pratica specifica 1", "Applicazione pratica specifica 2", "Applicazione pratica specifica 3"],
+    "reflectiveQuestion": "Domanda riflessiva profonda che stimoli l'introspezione personale"
   }
 }
 
-⸻ Stop conditions
-Il compito è completato quando:
-• La storia è trascritta fedelmente (se era in immagine).
-• Sono fornite tutte le 5 sezioni nel formato richiesto.
-• L'analisi distingue chiaramente tra testo originale e interpretazioni.
-• Le lezioni personali sono formulate in modo concreto e applicabile.
+⸻ ISTRUZIONI SPECIFICHE
+• **Sintesi**: Sii preciso ma coinvolgente, cattura l'atmosfera del testo
+• **Elementi simbolici**: Identifica almeno 3-5 elementi chiave, analizzali in profondità
+• **Temi filosofici**: Identifica 4-5 temi principali, sii specifico
+• **Interpretazione esistenziale**: Sviluppa un'analisi di 2-3 frasi ben strutturate
+• **Applicazioni pratiche**: Fornisci 3 esempi concreti e specifici
+• **Domanda riflessiva**: Formula una domanda che stimoli l'introspezione
 
-Testo da analizzare:
-{{TESTO}}`;
+⸻ QUALITÀ RICHIESTA
+• **Accuratezza**: Ogni interpretazione deve essere supportata dal testo
+• **Originalità**: Offri insights unici e non banali
+• **Profondità**: Vai oltre l'ovvio, esplora i significati nascosti
+• **Utilità**: Rendi l'analisi utile per la crescita personale del lettore
 
-// Mock AI function - replace with actual AI service
+Analizza il seguente testo con la massima attenzione e profondità:
+
+`;
+
+// Funzione principale per chiamare l'AI con retry automatico
 export const callAI = async (text: string, apiKey?: string): Promise<AiResults> => {
-  const prompt = AI_PROMPT_TEMPLATE.replace('{{TESTO}}', text);
+  const key = apiKey || OPENAI_CONFIG.API_KEY;
   
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  // Mock response for demo purposes (literary analysis)
-  const mockResponse: AiResults = {
-    transcription: text,
-    plotSummary: "La storia narra di un protagonista che attraversa un viaggio di trasformazione, incontrando ostacoli e alleati che lo guidano verso una comprensione più profonda di sé stesso e del mondo circostante. Gli eventi si susseguono in un crescendo drammatico che culmina in una rivelazione che cambia la percezione della realtà.",
-    symbolicAnalysis: {
-      keyElements: [
-        {
-          element: "Il Viaggio",
-          description: "Il percorso fisico o metaforico del protagonista",
-          symbolicMeaning: "Rappresenta l'evoluzione interiore e la ricerca di significato",
-          culturalReferences: "Archetipo del Hero's Journey di Campbell, miti omerici"
+  if (!key) {
+    throw new Error(OPENAI_ERRORS.API_KEY_MISSING);
+  }
+
+  // Controlla la cache
+  const textHash = text.trim().toLowerCase();
+  if (analysisCache.has(textHash)) {
+    console.log('Risultato trovato in cache');
+    return analysisCache.get(textHash)!;
+  }
+
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= OPENAI_CONFIG.MAX_RETRIES; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), OPENAI_CONFIG.TIMEOUT);
+
+      const response = await fetch(`${OPENAI_CONFIG.BASE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`,
         },
-        {
-          element: "La Soglia",
-          description: "Momento di passaggio o decisione cruciale",
-          symbolicMeaning: "Trasformazione, morte simbolica del vecchio sé",
-          culturalReferences: "Riti di passaggio, simbolismo degli archetipi junghiani"
-        },
-        {
-          element: "Il Mentore",
-          description: "Figura guida che appare nel momento del bisogno",
-          symbolicMeaning: "La saggezza interiore, la voce della coscienza superiore",
-          culturalReferences: "Archetipo del Saggio, tradizione dei maestri spirituali"
-        }
-      ]
-    },
-    deepMeaning: {
-      philosophicalThemes: [
-        "La ricerca dell'identità autentica",
-        "Il confronto con l'ignoto e la paura",
-        "La trasformazione attraverso l'esperienza"
-      ],
-      existentialInterpretation: "Il testo esplora la condizione umana universale di crescita attraverso l'adversità, suggerendo che ogni sfida è un'opportunità di evoluzione spirituale e che la vera conoscenza nasce dall'esperienza diretta piuttosto che dall'apprendimento teorico.",
-      universalTruths: "La crescita richiede coraggio per lasciare la zona di comfort; la saggezza emerge dall'integrazione di esperienza e riflessione; ogni individuo possiede le risorse interiori necessarie per superare le proprie sfide."
-    },
-    personalLesson: {
-      mainInsight: "Ogni ostacolo nella vita è un'opportunità mascherata per sviluppare qualità interiori che non sapevamo di possedere.",
-      practicalApplications: [
-        "Affrontare le sfide quotidiane come occasioni di crescita personale",
-        "Cercare il significato profondo nelle esperienze difficili",
-        "Sviluppare la fiducia nelle proprie risorse interiori"
-      ],
-      reflectiveQuestion: "Quale sfida attuale nella tua vita potrebbe essere in realtà un invito a sviluppare una parte di te ancora inesplorata?"
+        body: JSON.stringify({
+          model: OPENAI_CONFIG.MODEL,
+          messages: [
+            {
+              role: 'system',
+              content: LITERARY_ANALYSIS_PROMPT
+            },
+            {
+              role: 'user',
+              content: text
+            }
+          ],
+          max_tokens: OPENAI_CONFIG.MAX_TOKENS,
+          temperature: OPENAI_CONFIG.TEMPERATURE,
+          top_p: OPENAI_CONFIG.TOP_P,
+          frequency_penalty: OPENAI_CONFIG.FREQUENCY_PENALTY,
+          presence_penalty: OPENAI_CONFIG.PRESENCE_PENALTY,
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      
+      if (response.status === 401) {
+        throw new Error(OPENAI_ERRORS.INVALID_API_KEY);
+      } else if (response.status === 429) {
+        throw new Error(OPENAI_ERRORS.RATE_LIMIT_EXCEEDED);
+      } else if (response.status === 402) {
+        throw new Error(OPENAI_ERRORS.QUOTA_EXCEEDED);
+      } else {
+        throw new Error(`${OPENAI_ERRORS.API_ERROR}: ${errorData.error?.message || response.statusText}`);
+      }
     }
-  };
+
+    const data = await response.json();
+    const content = data.choices[0]?.message?.content;
+    
+    if (!content) {
+      throw new Error(OPENAI_ERRORS.API_ERROR);
+    }
+
+      const aiResults = validateAIResponse(content);
+      if (!aiResults) {
+        throw new Error('Risposta AI non valida o malformata');
+      }
+
+      // Salva in cache
+      analysisCache.set(textHash, aiResults);
+      console.log('Risultato salvato in cache');
+
+      return aiResults;
+
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(OPENAI_ERRORS.UNKNOWN_ERROR);
+      
+      // Se è l'ultimo tentativo, lancia l'errore
+      if (attempt === OPENAI_CONFIG.MAX_RETRIES) {
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            throw new Error(OPENAI_ERRORS.TIMEOUT_ERROR);
+          }
+          if (error.message.includes('fetch') || error.message.includes('network')) {
+            throw new Error(OPENAI_ERRORS.NETWORK_ERROR);
+          }
+          if (error.message.includes('timeout')) {
+            throw new Error(OPENAI_ERRORS.TIMEOUT_ERROR);
+          }
+          throw error;
+        }
+        throw new Error(OPENAI_ERRORS.UNKNOWN_ERROR);
+      }
+
+      // Aspetta prima del prossimo tentativo
+      await new Promise(resolve => setTimeout(resolve, OPENAI_CONFIG.RETRY_DELAY * attempt));
+    }
+  }
+
+  // Se arriviamo qui, tutti i tentativi sono falliti
+  throw lastError || new Error(OPENAI_ERRORS.UNKNOWN_ERROR);
+};
+
+// Funzione per pulire la cache
+export const clearAnalysisCache = () => {
+  analysisCache.clear();
+  console.log('Cache analisi pulita');
+};
+
+// Funzione per ottenere la dimensione della cache
+export const getCacheSize = () => {
+  return analysisCache.size;
+};
+
+// Prompt per la generazione di quiz interattivi
+const QUIZ_GENERATION_PROMPT = `Sei un esperto educatore e creatore di quiz, specializzato nella creazione di test interattivi basati su analisi letterarie. La tua missione è creare quiz coinvolgenti e educativi che aiutino gli utenti a comprendere meglio i testi analizzati.
+
+⸻ MISSIONE
+Crea un set completo di quiz interattivi basato sull'analisi letteraria fornita, includendo:
+1. Quiz a scelta multipla su comprensione e interpretazione
+2. Flashcard per concetti chiave e simboli
+3. Domande riflessive per stimolare l'introspezione
+
+⸻ STANDARD DI QUALITÀ
+• **Varietà**: Mix di domande facili, medie e difficili
+• **Rilevanza**: Ogni domanda deve essere direttamente collegata all'analisi
+• **Chiarezza**: Domande chiare e opzioni ben definite
+• **Educativo**: Ogni risposta deve insegnare qualcosa
+• **Coinvolgente**: Stimolare la curiosità e la riflessione
+
+⸻ OUTPUT FORMAT
+Restituisci i quiz in formato JSON con questa struttura esatta. IMPORTANTE: Non usare caratteri di escape aggiuntivi e non avvolgere il JSON in blocchi di codice markdown.
+
+{
+  "quiz": [
+    {
+      "id": "q1",
+      "question": "Domanda chiara e specifica",
+      "options": ["Opzione A", "Opzione B", "Opzione C", "Opzione D"],
+      "correctAnswer": 0,
+      "explanation": "Spiegazione dettagliata della risposta corretta",
+      "difficulty": "easy"
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "Concetto o termine da ricordare",
+      "back": "Definizione o spiegazione dettagliata",
+      "category": "concept"
+    }
+  ],
+  "reflectiveQuestions": [
+    {
+      "id": "rq1",
+      "question": "Domanda riflessiva profonda",
+      "prompts": ["Spunto 1", "Spunto 2", "Spunto 3"],
+      "category": "personal"
+    }
+  ]
+}
+
+⸻ ISTRUZIONI SPECIFICHE
+• **Quiz**: Crea 5-8 domande a scelta multipla con difficoltà variabile
+• **Flashcard**: Crea 6-10 flashcard per concetti chiave, simboli, temi
+• **Domande riflessive**: Crea 3-5 domande per stimolare l'introspezione
+• **Varietà**: Assicurati che le domande coprano tutti gli aspetti dell'analisi
+• **Qualità**: Ogni elemento deve essere educativo e stimolante
+• **FORMATO**: Restituisci SOLO il JSON puro, senza blocchi di codice markdown o caratteri di escape aggiuntivi
+
+Genera quiz basati sulla seguente analisi letteraria:
+
+`;
+
+// Funzione per generare quiz AI
+export const generateQuiz = async (aiResults: AiResults, apiKey?: string): Promise<AiResults['interactiveLearning']> => {
+  const key = apiKey || OPENAI_CONFIG.API_KEY;
   
-  return mockResponse;
+  if (!key) {
+    throw new Error(OPENAI_ERRORS.API_KEY_MISSING);
+  }
+
+  // Prepara il contesto per il quiz
+  const analysisContext = `
+ANALISI LETTERARIA:
+- Trama: ${aiResults.plotSummary}
+- Elementi simbolici: ${aiResults.symbolicAnalysis.keyElements.map(el => `${el.element}: ${el.symbolicMeaning}`).join(', ')}
+- Temi filosofici: ${aiResults.deepMeaning.philosophicalThemes.join(', ')}
+- Interpretazione esistenziale: ${aiResults.deepMeaning.existentialInterpretation}
+- Lezione principale: ${aiResults.personalLesson.mainInsight}
+- Applicazioni pratiche: ${aiResults.personalLesson.practicalApplications.join(', ')}
+  `.trim();
+
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= OPENAI_CONFIG.MAX_RETRIES; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), OPENAI_CONFIG.TIMEOUT);
+
+      const response = await fetch(`${OPENAI_CONFIG.BASE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`,
+        },
+        body: JSON.stringify({
+          model: OPENAI_CONFIG.MODEL,
+          messages: [
+            {
+              role: 'system',
+              content: QUIZ_GENERATION_PROMPT
+            },
+            {
+              role: 'user',
+              content: analysisContext
+            }
+          ],
+          max_tokens: OPENAI_CONFIG.MAX_TOKENS,
+          temperature: 0.4, // Leggermente più creativo per i quiz
+          top_p: OPENAI_CONFIG.TOP_P,
+          frequency_penalty: OPENAI_CONFIG.FREQUENCY_PENALTY,
+          presence_penalty: OPENAI_CONFIG.PRESENCE_PENALTY,
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        
+        if (response.status === 401) {
+          throw new Error(OPENAI_ERRORS.INVALID_API_KEY);
+        } else if (response.status === 429) {
+          throw new Error(OPENAI_ERRORS.RATE_LIMIT_EXCEEDED);
+        } else if (response.status === 402) {
+          throw new Error(OPENAI_ERRORS.QUOTA_EXCEEDED);
+        } else {
+          throw new Error(`${OPENAI_ERRORS.API_ERROR}: ${errorData.error?.message || response.statusText}`);
+        }
+      }
+
+      const data = await response.json();
+      const content = data.choices[0]?.message?.content;
+      
+      if (!content) {
+        throw new Error(OPENAI_ERRORS.API_ERROR);
+      }
+
+      const quizResults = validateQuizResponse(content);
+      if (!quizResults) {
+        throw new Error('Risposta quiz non valida o malformata');
+      }
+
+      return quizResults;
+
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(OPENAI_ERRORS.UNKNOWN_ERROR);
+      
+      if (attempt === OPENAI_CONFIG.MAX_RETRIES) {
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            throw new Error(OPENAI_ERRORS.TIMEOUT_ERROR);
+          }
+          if (error.message.includes('fetch') || error.message.includes('network')) {
+            throw new Error(OPENAI_ERRORS.NETWORK_ERROR);
+          }
+          if (error.message.includes('timeout')) {
+            throw new Error(OPENAI_ERRORS.TIMEOUT_ERROR);
+          }
+          throw error;
+        }
+        throw new Error(OPENAI_ERRORS.UNKNOWN_ERROR);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, OPENAI_CONFIG.RETRY_DELAY * attempt));
+    }
+  }
+
+  throw lastError || new Error(OPENAI_ERRORS.UNKNOWN_ERROR);
+};
+
+// Validazione della risposta quiz
+export const validateQuizResponse = (response: string): AiResults['interactiveLearning'] | null => {
+  try {
+    // Prima cerca di estrarre il JSON da un blocco di codice markdown
+    let jsonMatch = response.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+    
+    if (!jsonMatch) {
+      // Se non trova un blocco di codice, cerca direttamente il JSON
+      jsonMatch = response.match(/\{[\s\S]*\}/);
+    } else {
+      // Estrai il contenuto del blocco di codice
+      jsonMatch = [jsonMatch[0], jsonMatch[1]];
+    }
+    
+    if (!jsonMatch) {
+      console.error('Nessun JSON trovato nella risposta quiz:', response);
+      return null;
+    }
+
+    // Pulisci il JSON da caratteri di escape malformati
+    let jsonString = jsonMatch[1] || jsonMatch[0];
+    
+    // Rimuovi escape doppi e tripli
+    jsonString = jsonString.replace(/\\\\\\"/g, '"');
+    jsonString = jsonString.replace(/\\\\"/g, '"');
+    jsonString = jsonString.replace(/\\"/g, '"');
+    
+    // Rimuovi escape doppi per altri caratteri
+    jsonString = jsonString.replace(/\\\\n/g, '\\n');
+    jsonString = jsonString.replace(/\\\\t/g, '\\t');
+    jsonString = jsonString.replace(/\\\\r/g, '\\r');
+
+    console.log('JSON pulito:', jsonString);
+
+    const parsed = JSON.parse(jsonString);
+    
+    if (!parsed.quiz || !parsed.flashcards || !parsed.reflectiveQuestions) {
+      console.error('Struttura JSON quiz incompleta:', parsed);
+      return null;
+    }
+
+    return {
+      quiz: parsed.quiz.map((q: Record<string, unknown>) => ({
+        id: String(q.id || `q${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
+        question: String(q.question || '').replace(/"/g, ''),
+        options: Array.isArray(q.options) ? q.options.map(opt => String(opt).replace(/"/g, '')) : [],
+        correctAnswer: typeof q.correctAnswer === 'number' ? q.correctAnswer : 0,
+        explanation: String(q.explanation || '').replace(/"/g, ''),
+        difficulty: ['easy', 'medium', 'hard'].includes(String(q.difficulty)) ? String(q.difficulty) : 'medium'
+      })),
+      flashcards: parsed.flashcards.map((fc: Record<string, unknown>) => ({
+        id: String(fc.id || `fc${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
+        front: String(fc.front || '').replace(/"/g, ''),
+        back: String(fc.back || '').replace(/"/g, ''),
+        category: ['concept', 'symbol', 'theme', 'quote'].includes(String(fc.category)) ? String(fc.category) : 'concept'
+      })),
+      reflectiveQuestions: parsed.reflectiveQuestions.map((rq: Record<string, unknown>) => ({
+        id: String(rq.id || `rq${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
+        question: String(rq.question || '').replace(/"/g, ''),
+        prompts: Array.isArray(rq.prompts) ? rq.prompts.map(prompt => String(prompt).replace(/"/g, '')) : [],
+        category: ['personal', 'analytical', 'creative', 'philosophical'].includes(String(rq.category)) ? String(rq.category) : 'personal'
+      }))
+    };
+
+  } catch (error) {
+    console.error('Errore nel parsing della risposta quiz:', error);
+    
+    // Fallback: prova a estrarre e pulire manualmente il JSON
+    try {
+      console.log('Tentativo di fallback per il parsing JSON...');
+      
+      // Cerca di estrarre il contenuto JSON dalla risposta completa
+      const fallbackMatch = response.match(/\{[\s\S]*\}/);
+      if (fallbackMatch) {
+        let fallbackJson = fallbackMatch[0];
+        
+        // Rimuovi tutti i caratteri di escape problematici
+        fallbackJson = fallbackJson.replace(/\\+"/g, '"');
+        fallbackJson = fallbackJson.replace(/\\+n/g, '\\n');
+        fallbackJson = fallbackJson.replace(/\\+t/g, '\\t');
+        fallbackJson = fallbackJson.replace(/\\+r/g, '\\r');
+        
+        console.log('JSON fallback pulito:', fallbackJson);
+        
+        const fallbackParsed = JSON.parse(fallbackJson);
+        
+        // Valida e restituisci se possibile
+        if (fallbackParsed.quiz && fallbackParsed.flashcards && fallbackParsed.reflectiveQuestions) {
+          console.log('Fallback riuscito!');
+          return {
+            quiz: fallbackParsed.quiz.map((q: Record<string, unknown>) => ({
+              id: String(q.id || `q${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
+              question: String(q.question || '').replace(/"/g, ''),
+              options: Array.isArray(q.options) ? q.options.map(opt => String(opt).replace(/"/g, '')) : [],
+              correctAnswer: typeof q.correctAnswer === 'number' ? q.correctAnswer : 0,
+              explanation: String(q.explanation || '').replace(/"/g, ''),
+              difficulty: ['easy', 'medium', 'hard'].includes(String(q.difficulty)) ? String(q.difficulty) : 'medium'
+            })),
+            flashcards: fallbackParsed.flashcards.map((fc: Record<string, unknown>) => ({
+              id: String(fc.id || `fc${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
+              front: String(fc.front || '').replace(/"/g, ''),
+              back: String(fc.back || '').replace(/"/g, ''),
+              category: ['concept', 'symbol', 'theme', 'quote'].includes(String(fc.category)) ? String(fc.category) : 'concept'
+            })),
+            reflectiveQuestions: fallbackParsed.reflectiveQuestions.map((rq: Record<string, unknown>) => ({
+              id: String(rq.id || `rq${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
+              question: String(rq.question || '').replace(/"/g, ''),
+              prompts: Array.isArray(rq.prompts) ? rq.prompts.map(prompt => String(prompt).replace(/"/g, '')) : [],
+              category: ['personal', 'analytical', 'creative', 'philosophical'].includes(String(rq.category)) ? String(rq.category) : 'personal'
+            }))
+          };
+        }
+      }
+    } catch (fallbackError) {
+      console.error('Anche il fallback è fallito:', fallbackError);
+    }
+    
+    return null;
+  }
 };
 
 export const validateAIResponse = (response: string): AiResults | null => {
   try {
-    const parsed = JSON.parse(response);
-    
-    // Validate basic structure
-    if (!parsed.transcription || !parsed.plotSummary || !parsed.symbolicAnalysis || !parsed.deepMeaning || !parsed.personalLesson) {
+    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error('Nessun JSON trovato nella risposta:', response);
       return null;
     }
+
+    const parsed = JSON.parse(jsonMatch[0]);
     
-    // Validate symbolicAnalysis
-    if (!parsed.symbolicAnalysis.keyElements || !Array.isArray(parsed.symbolicAnalysis.keyElements)) {
+    if (!parsed.plotSummary || 
+        !parsed.symbolicAnalysis?.keyElements || 
+        !parsed.deepMeaning?.philosophicalThemes ||
+        !parsed.deepMeaning?.existentialInterpretation ||
+        !parsed.deepMeaning?.universalTruths ||
+        !parsed.personalLesson?.mainInsight ||
+        !parsed.personalLesson?.practicalApplications ||
+        !parsed.personalLesson?.reflectiveQuestion) {
+      console.error('Struttura JSON incompleta:', parsed);
       return null;
     }
-    
-    // Validate deepMeaning
-    if (!Array.isArray(parsed.deepMeaning.philosophicalThemes) || 
-        !parsed.deepMeaning.existentialInterpretation || 
-        !parsed.deepMeaning.universalTruths) {
-      return null;
-    }
-    
-    // Validate personalLesson
-    if (!parsed.personalLesson.mainInsight || 
-        !Array.isArray(parsed.personalLesson.practicalApplications) || 
-        !parsed.personalLesson.reflectiveQuestion) {
-      return null;
-    }
-    
-    return parsed as AiResults;
-  } catch {
-    return null;
+
+    return {
+      transcription: '',
+      plotSummary: parsed.plotSummary,
+      symbolicAnalysis: {
+        keyElements: parsed.symbolicAnalysis.keyElements.map((el: Record<string, string>) => ({
+          element: el.element || '',
+          description: el.description || '',
+          symbolicMeaning: el.symbolicMeaning || '',
+          culturalReferences: el.culturalReferences || ''
+        }))
+      },
+      deepMeaning: {
+        philosophicalThemes: Array.isArray(parsed.deepMeaning.philosophicalThemes) 
+          ? parsed.deepMeaning.philosophicalThemes 
+          : [parsed.deepMeaning.philosophicalThemes],
+        existentialInterpretation: parsed.deepMeaning.existentialInterpretation,
+        universalTruths: parsed.deepMeaning.universalTruths
+      },
+      personalLesson: {
+        mainInsight: parsed.personalLesson.mainInsight,
+        practicalApplications: Array.isArray(parsed.personalLesson.practicalApplications)
+          ? parsed.personalLesson.practicalApplications
+          : [parsed.personalLesson.practicalApplications],
+        reflectiveQuestion: parsed.personalLesson.reflectiveQuestion
+      }
+    };
+
+  } catch (error) {
+    console.error('Errore nel parsing della risposta AI:', error);
+	return null;
   }
 };

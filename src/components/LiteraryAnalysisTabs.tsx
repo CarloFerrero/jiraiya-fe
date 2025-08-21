@@ -1,12 +1,9 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Copy, Check, BookOpen, Eye, Brain, Lightbulb } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { BookOpen, Eye, Brain, Lightbulb, Sparkles, Target, Heart } from 'lucide-react';
 import type { AiResults } from '@/types';
-import { useState } from 'react';
 
 interface LiteraryAnalysisTabsProps {
   results: AiResults;
@@ -19,279 +16,192 @@ export const LiteraryAnalysisTabs: React.FC<LiteraryAnalysisTabsProps> = ({
   activeTab, 
   onTabChange 
 }) => {
-  const [personalReflection, setPersonalReflection] = useState('');
-  const [copiedItems, setCopiedItems] = useState<Record<string, boolean>>({});
-
-  const handleCopy = async (text: string, itemKey: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedItems(prev => ({ ...prev, [itemKey]: true }));
-      setTimeout(() => {
-        setCopiedItems(prev => ({ ...prev, [itemKey]: false }));
-      }, 2000);
-    } catch (error) {
-      console.error('Failed to copy text:', error);
-    }
-  };
-
-  const CopyButton: React.FC<{ text: string; itemKey: string }> = ({ text, itemKey }) => (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => handleCopy(text, itemKey)}
-      className="h-8 w-8 p-0 hover:bg-accent"
-    >
-      {copiedItems[itemKey] ? (
-        <Check className="w-3 h-3 text-success" />
-      ) : (
-        <Copy className="w-3 h-3" />
-      )}
-    </Button>
-  );
-
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <h2 className="text-lg font-semibold">📖 Analisi Letteraria e Simbolica</h2>
+        <Badge variant="secondary" className="ml-auto">
+          <Sparkles className="w-3 h-3 mr-1" />
+          AI Powered
+        </Badge>
       </div>
 
       <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-muted/50">
-          <TabsTrigger value="plot" className="flex items-center gap-1">
-            <BookOpen className="w-4 h-4" />
-            Trama
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-2 md:grid-cols-4 bg-muted/50 flex-wrap gap-1">
+          <TabsTrigger value="plot" className="flex items-center gap-1 text-xs sm:text-sm">
+            <BookOpen className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Trama</span>
+            <span className="sm:hidden">📖</span>
           </TabsTrigger>
-          <TabsTrigger value="symbolic" className="flex items-center gap-1">
-            <Eye className="w-4 h-4" />
-            Simboli
+          <TabsTrigger value="symbolic" className="flex items-center gap-1 text-xs sm:text-sm">
+            <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Simboli</span>
+            <span className="sm:hidden">👁️</span>
           </TabsTrigger>
-          <TabsTrigger value="meaning" className="flex items-center gap-1">
-            <Brain className="w-4 h-4" />
-            Significato
+          <TabsTrigger value="meaning" className="flex items-center gap-1 text-xs sm:text-sm">
+            <Brain className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Significato</span>
+            <span className="sm:hidden">🧠</span>
           </TabsTrigger>
-          <TabsTrigger value="lesson" className="flex items-center gap-1">
-            <Lightbulb className="w-4 h-4" />
-            Lezione
+          <TabsTrigger value="lesson" className="flex items-center gap-1 text-xs sm:text-sm">
+            <Lightbulb className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Lezione</span>
+            <span className="sm:hidden">💡</span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="plot" className="space-y-4">
           <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-primary" />
-                  Sintesi della Trama
-                </CardTitle>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">
-                    {results.plotSummary.split(' ').length} parole
-                  </Badge>
-                  <CopyButton text={results.plotSummary} itemKey="plot" />
-                </div>
-              </div>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-primary" />
+                Sintesi della Trama
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm leading-relaxed">
-                {results.plotSummary}
-              </p>
+              <div className="prose prose-sm max-w-none">
+                <p className="text-foreground leading-relaxed">
+                  {results.plotSummary}
+                </p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="symbolic" className="space-y-4">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                🔍 Elementi Simbolici Chiave
-              </h3>
-              <Badge variant="secondary">
-                {results.symbolicAnalysis.keyElements.length} elementi
-              </Badge>
-            </div>
-            
-            {results.symbolicAnalysis.keyElements.map((element, index) => (
-              <Card key={index} className="border-l-4 border-l-primary">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">
-                      {element.element}
-                    </CardTitle>
-                    <CopyButton 
-                      text={`${element.element}: ${element.symbolicMeaning}\n\nDescrizione: ${element.description}\n\nRiferimenti culturali: ${element.culturalReferences}`} 
-                      itemKey={`element-${index}`} 
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                      Nel testo:
-                    </h4>
-                    <p className="text-sm italic">
-                      "{element.description}"
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                      Significato simbolico:
-                    </h4>
-                    <p className="text-sm leading-relaxed">
-                      {element.symbolicMeaning}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                      Riferimenti culturali:
-                    </h4>
-                    <p className="text-sm text-accent leading-relaxed">
-                      {element.culturalReferences}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="meaning" className="space-y-4">
-          {/* Philosophical Themes */}
           <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
-                  🧠 Temi Filosofici
-                </CardTitle>
-                <CopyButton 
-                  text={results.deepMeaning.philosophicalThemes.join(', ')} 
-                  itemKey="themes" 
-                />
-              </div>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Eye className="w-5 h-5 text-primary" />
+                Analisi Simbolica
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {results.deepMeaning.philosophicalThemes.map((theme, index) => (
-                  <Badge key={index} variant="outline" className="bg-primary/5">
-                    {theme}
-                  </Badge>
+              <div className="space-y-6">
+                {results.symbolicAnalysis.keyElements.map((element, index) => (
+                  <div key={index} className="border-l-4 border-primary/20 pl-4 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <Target className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <h4 className="font-semibold text-foreground">
+                          {element.element}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          <strong>Nel testo:</strong> {element.description}
+                        </p>
+                        <p className="text-sm text-foreground">
+                          <strong>Significato simbolico:</strong> {element.symbolicMeaning}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          <strong>Riferimenti culturali:</strong> {element.culturalReferences}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
 
-          {/* Existential Interpretation */}
+        <TabsContent value="meaning" className="space-y-4">
           <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
-                  ✨ Interpretazione Esistenziale
-                </CardTitle>
-                <CopyButton text={results.deepMeaning.existentialInterpretation} itemKey="existential" />
-              </div>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Brain className="w-5 h-5 text-primary" />
+                Significato Profondo
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm leading-relaxed">
-                {results.deepMeaning.existentialInterpretation}
-              </p>
-            </CardContent>
-          </Card>
+              <div className="space-y-6">
+                {/* Temi Filosofici */}
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-foreground flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    Temi Filosofici
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {results.deepMeaning.philosophicalThemes.map((theme, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {theme}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
 
-          {/* Universal Truths */}
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
-                  🌟 Verità Universali
-                </CardTitle>
-                <CopyButton text={results.deepMeaning.universalTruths} itemKey="truths" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-muted/30 p-4 rounded-lg border-l-4 border-accent">
-                <p className="text-sm leading-relaxed italic">
-                  {results.deepMeaning.universalTruths}
-                </p>
+                {/* Interpretazione Esistenziale */}
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-foreground">Interpretazione Esistenziale</h4>
+                  <div className="bg-muted/30 rounded-lg p-4">
+                    <p className="text-sm text-foreground leading-relaxed">
+                      {results.deepMeaning.existentialInterpretation}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Verità Universali */}
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-foreground">Verdà Universali</h4>
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                    <p className="text-sm text-foreground leading-relaxed">
+                      {results.deepMeaning.universalTruths}
+                    </p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="lesson" className="space-y-4">
-          {/* Main Insight */}
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
-                  💡 Insight Principale
-                </CardTitle>
-                <CopyButton text={results.personalLesson.mainInsight} itemKey="insight" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-gradient-sensei/10 p-4 rounded-lg border">
-                <p className="text-sm leading-relaxed font-medium">
-                  {results.personalLesson.mainInsight}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Practical Applications */}
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
-                  🎯 Applicazioni Pratiche
-                </CardTitle>
-                <CopyButton 
-                  text={results.personalLesson.practicalApplications.map((app, i) => `${i + 1}. ${app}`).join('\n')} 
-                  itemKey="applications" 
-                />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-3">
-                {results.personalLesson.practicalApplications.map((application, index) => (
-                  <li key={index} className="flex items-start gap-3 text-sm">
-                    <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">
-                      {index + 1}
-                    </span>
-                    <span className="leading-relaxed">{application}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-
-          {/* Reflective Question */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                🤔 Domanda Riflessiva
+              <CardTitle className="flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-primary" />
+                Lezione Personale
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-muted/30 p-4 rounded-lg border-l-4 border-primary">
-                <p className="text-sm leading-relaxed italic">
-                  "{results.personalLesson.reflectiveQuestion}"
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  💭 La tua riflessione personale:
-                </label>
-                <Textarea
-                  placeholder="Prenditi il tempo per riflettere profondamente su questa domanda. Lascia che i tuoi pensieri fluiscano liberamente..."
-                  value={personalReflection}
-                  onChange={(e) => setPersonalReflection(e.target.value)}
-                  className="min-h-32 resize-none"
-                />
-                <p className="text-xs text-muted-foreground">
-                  ✨ La riflessione personale trasforma la lettura in saggezza vissuta
-                </p>
+            <CardContent>
+              <div className="space-y-6">
+                {/* Principale Insight */}
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-foreground flex items-center gap-2">
+                    <Heart className="w-4 h-4 text-primary" />
+                    Principale Lezione
+                  </h4>
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                    <p className="text-sm text-foreground leading-relaxed">
+                      {results.personalLesson.mainInsight}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Applicazioni Pratiche */}
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-foreground">Applicazioni Pratiche</h4>
+                  <div className="space-y-2">
+                    {results.personalLesson.practicalApplications.map((application, index) => (
+                      <div key={index} className="flex items-start gap-3 bg-muted/30 rounded-lg p-3">
+                        <div className="w-5 h-5 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-xs font-bold text-primary">{index + 1}</span>
+                        </div>
+                        <p className="text-sm text-foreground">{application}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Domanda Riflessiva */}
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-foreground">Domanda per la Riflessione</h4>
+                  <div className="bg-muted/30 rounded-lg p-4 border-l-4 border-primary">
+                    <p className="text-sm text-foreground leading-relaxed italic">
+                      "{results.personalLesson.reflectiveQuestion}"
+                    </p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
