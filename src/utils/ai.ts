@@ -211,14 +211,7 @@ Crea un set completo di quiz interattivi basato sull'analisi letteraria fornita,
 • **Coinvolgente**: Stimolare la curiosità e la riflessione
 
 ⸻ OUTPUT FORMAT
-Restituisci i quiz in formato JSON con questa struttura esatta. 
-
-IMPORTANTE: 
-- Non usare caratteri di escape aggiuntivi
-- Non avvolgere il JSON in blocchi di codice markdown
-- Usa virgolette doppie standard per le stringhe
-- Non usare virgolette singole o caratteri di escape non necessari
-- Assicurati che il JSON sia sintatticamente corretto
+Restituisci i quiz in formato JSON con questa struttura esatta. IMPORTANTE: Usa solo virgolette doppie standard per le stringhe, senza escape aggiuntivi.
 
 {
   "quiz": [
@@ -255,7 +248,8 @@ IMPORTANTE:
 • **Domande riflessive**: Crea 3-5 domande per stimolare l'introspezione
 • **Varietà**: Assicurati che le domande coprano tutti gli aspetti dell'analisi
 • **Qualità**: Ogni elemento deve essere educativo e stimolante
-• **FORMATO**: Restituisci SOLO il JSON puro, senza blocchi di codice markdown o caratteri di escape aggiuntivi
+• **FORMATO**: Restituisci SOLO il JSON puro, senza blocchi di codice markdown
+• **VIRGOLETTE**: Usa solo virgolette doppie standard, evita caratteri di escape
 
 Genera quiz basati sulla seguente analisi letteraria:
 
@@ -373,46 +367,13 @@ ANALISI LETTERARIA:
 // Validazione della risposta quiz
 export const validateQuizResponse = (response: string): AiResults['interactiveLearning'] | null => {
   try {
-    // Prima cerca di estrarre il JSON da un blocco di codice markdown
-    let jsonMatch = response.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
-    
-    if (!jsonMatch) {
-      // Se non trova un blocco di codice, cerca direttamente il JSON
-      jsonMatch = response.match(/\{[\s\S]*\}/);
-    } else {
-      // Estrai il contenuto del blocco di codice
-      jsonMatch = [jsonMatch[0], jsonMatch[1]];
-    }
-    
+    const jsonMatch = response.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       console.error('Nessun JSON trovato nella risposta quiz:', response);
       return null;
     }
 
-    // Pulisci il JSON da caratteri di escape malformati
-    let jsonString = jsonMatch[1] || jsonMatch[0];
-    
-    // Rimuovi escape doppi e tripli per le virgolette
-    jsonString = jsonString.replace(/\\\\\\"/g, '"');
-    jsonString = jsonString.replace(/\\\\"/g, '"');
-    jsonString = jsonString.replace(/\\"/g, '"');
-    
-    // Rimuovi escape doppi per altri caratteri
-    jsonString = jsonString.replace(/\\\\n/g, '\\n');
-    jsonString = jsonString.replace(/\\\\t/g, '\\t');
-    jsonString = jsonString.replace(/\\\\r/g, '\\r');
-    
-    // Rimuovi virgolette doppie non escaped all'interno delle stringhe
-    // Questo è il problema principale: l'AI genera "text" invece di "text"
-    jsonString = jsonString.replace(/"([^"]*)"([^"]*)"([^"]*)"/g, '"$1$2$3"');
-    jsonString = jsonString.replace(/"([^"]*)"([^"]*)"/g, '"$1$2"');
-    
-    // Rimuovi virgolette singole non escaped
-    jsonString = jsonString.replace(/(?<!\\)'([^']*)'/g, '"$1"');
-
-    console.log('JSON pulito:', jsonString);
-
-    const parsed = JSON.parse(jsonString);
+    const parsed = JSON.parse(jsonMatch[0]);
     
     if (!parsed.quiz || !parsed.flashcards || !parsed.reflectiveQuestions) {
       console.error('Struttura JSON quiz incompleta:', parsed);
@@ -421,87 +382,29 @@ export const validateQuizResponse = (response: string): AiResults['interactiveLe
 
     return {
       quiz: parsed.quiz.map((q: Record<string, unknown>) => ({
-        id: String(q.id || `q${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
-        question: String(q.question || '').replace(/"/g, ''),
-        options: Array.isArray(q.options) ? q.options.map(opt => String(opt).replace(/"/g, '')) : [],
+        id: String(q.id || `q${Math.random().toString(36).substring(2, 15)}`),
+        question: String(q.question || ''),
+        options: Array.isArray(q.options) ? q.options.map(opt => String(opt)) : [],
         correctAnswer: typeof q.correctAnswer === 'number' ? q.correctAnswer : 0,
-        explanation: String(q.explanation || '').replace(/"/g, ''),
+        explanation: String(q.explanation || ''),
         difficulty: ['easy', 'medium', 'hard'].includes(String(q.difficulty)) ? String(q.difficulty) : 'medium'
       })),
       flashcards: parsed.flashcards.map((fc: Record<string, unknown>) => ({
-        id: String(fc.id || `fc${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
-        front: String(fc.front || '').replace(/"/g, ''),
-        back: String(fc.back || '').replace(/"/g, ''),
+        id: String(fc.id || `fc${Math.random().toString(36).substring(2, 15)}`),
+        front: String(fc.front || ''),
+        back: String(fc.back || ''),
         category: ['concept', 'symbol', 'theme', 'quote'].includes(String(fc.category)) ? String(fc.category) : 'concept'
       })),
       reflectiveQuestions: parsed.reflectiveQuestions.map((rq: Record<string, unknown>) => ({
-        id: String(rq.id || `rq${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
-        question: String(rq.question || '').replace(/"/g, ''),
-        prompts: Array.isArray(rq.prompts) ? rq.prompts.map(prompt => String(prompt).replace(/"/g, '')) : [],
+        id: String(rq.id || `rq${Math.random().toString(36).substring(2, 15)}`),
+        question: String(rq.question || ''),
+        prompts: Array.isArray(rq.prompts) ? rq.prompts.map(prompt => String(prompt)) : [],
         category: ['personal', 'analytical', 'creative', 'philosophical'].includes(String(rq.category)) ? String(rq.category) : 'personal'
       }))
     };
 
   } catch (error) {
     console.error('Errore nel parsing della risposta quiz:', error);
-    
-    // Fallback: prova a estrarre e pulire manualmente il JSON
-    try {
-      console.log('Tentativo di fallback per il parsing JSON...');
-      
-      // Cerca di estrarre il contenuto JSON dalla risposta completa
-      const fallbackMatch = response.match(/\{[\s\S]*\}/);
-      if (fallbackMatch) {
-        let fallbackJson = fallbackMatch[0];
-        
-        // Rimuovi tutti i caratteri di escape problematici
-        fallbackJson = fallbackJson.replace(/\\+"/g, '"');
-        fallbackJson = fallbackJson.replace(/\\+n/g, '\\n');
-        fallbackJson = fallbackJson.replace(/\\+t/g, '\\t');
-        fallbackJson = fallbackJson.replace(/\\+r/g, '\\r');
-        
-        // Rimuovi virgolette doppie non escaped all'interno delle stringhe
-        fallbackJson = fallbackJson.replace(/"([^"]*)"([^"]*)"([^"]*)"/g, '"$1$2$3"');
-        fallbackJson = fallbackJson.replace(/"([^"]*)"([^"]*)"/g, '"$1$2"');
-        
-        // Rimuovi virgolette singole non escaped
-        fallbackJson = fallbackJson.replace(/(?<!\\)'([^']*)'/g, '"$1"');
-        
-        console.log('JSON fallback pulito:', fallbackJson);
-        
-        const fallbackParsed = JSON.parse(fallbackJson);
-        
-        // Valida e restituisci se possibile
-        if (fallbackParsed.quiz && fallbackParsed.flashcards && fallbackParsed.reflectiveQuestions) {
-          console.log('Fallback riuscito!');
-          return {
-            quiz: fallbackParsed.quiz.map((q: Record<string, unknown>) => ({
-              id: String(q.id || `q${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
-              question: String(q.question || '').replace(/"/g, ''),
-              options: Array.isArray(q.options) ? q.options.map(opt => String(opt).replace(/"/g, '')) : [],
-              correctAnswer: typeof q.correctAnswer === 'number' ? q.correctAnswer : 0,
-              explanation: String(q.explanation || '').replace(/"/g, ''),
-              difficulty: ['easy', 'medium', 'hard'].includes(String(q.difficulty)) ? String(q.difficulty) : 'medium'
-            })),
-            flashcards: fallbackParsed.flashcards.map((fc: Record<string, unknown>) => ({
-              id: String(fc.id || `fc${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
-              front: String(fc.front || '').replace(/"/g, ''),
-              back: String(fc.back || '').replace(/"/g, ''),
-              category: ['concept', 'symbol', 'theme', 'quote'].includes(String(fc.category)) ? String(fc.category) : 'concept'
-            })),
-            reflectiveQuestions: fallbackParsed.reflectiveQuestions.map((rq: Record<string, unknown>) => ({
-              id: String(rq.id || `rq${Math.random().toString(36).substring(2, 15)}`).replace(/"/g, ''),
-              question: String(rq.question || '').replace(/"/g, ''),
-              prompts: Array.isArray(rq.prompts) ? rq.prompts.map(prompt => String(prompt).replace(/"/g, '')) : [],
-              category: ['personal', 'analytical', 'creative', 'philosophical'].includes(String(rq.category)) ? String(rq.category) : 'personal'
-            }))
-          };
-        }
-      }
-    } catch (fallbackError) {
-      console.error('Anche il fallback è fallito:', fallbackError);
-    }
-    
     return null;
   }
 };
