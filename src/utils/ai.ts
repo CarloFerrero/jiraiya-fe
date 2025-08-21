@@ -211,7 +211,14 @@ Crea un set completo di quiz interattivi basato sull'analisi letteraria fornita,
 • **Coinvolgente**: Stimolare la curiosità e la riflessione
 
 ⸻ OUTPUT FORMAT
-Restituisci i quiz in formato JSON con questa struttura esatta. IMPORTANTE: Non usare caratteri di escape aggiuntivi e non avvolgere il JSON in blocchi di codice markdown.
+Restituisci i quiz in formato JSON con questa struttura esatta. 
+
+IMPORTANTE: 
+- Non usare caratteri di escape aggiuntivi
+- Non avvolgere il JSON in blocchi di codice markdown
+- Usa virgolette doppie standard per le stringhe
+- Non usare virgolette singole o caratteri di escape non necessari
+- Assicurati che il JSON sia sintatticamente corretto
 
 {
   "quiz": [
@@ -385,7 +392,7 @@ export const validateQuizResponse = (response: string): AiResults['interactiveLe
     // Pulisci il JSON da caratteri di escape malformati
     let jsonString = jsonMatch[1] || jsonMatch[0];
     
-    // Rimuovi escape doppi e tripli
+    // Rimuovi escape doppi e tripli per le virgolette
     jsonString = jsonString.replace(/\\\\\\"/g, '"');
     jsonString = jsonString.replace(/\\\\"/g, '"');
     jsonString = jsonString.replace(/\\"/g, '"');
@@ -394,6 +401,14 @@ export const validateQuizResponse = (response: string): AiResults['interactiveLe
     jsonString = jsonString.replace(/\\\\n/g, '\\n');
     jsonString = jsonString.replace(/\\\\t/g, '\\t');
     jsonString = jsonString.replace(/\\\\r/g, '\\r');
+    
+    // Rimuovi virgolette doppie non escaped all'interno delle stringhe
+    // Questo è il problema principale: l'AI genera "text" invece di "text"
+    jsonString = jsonString.replace(/"([^"]*)"([^"]*)"([^"]*)"/g, '"$1$2$3"');
+    jsonString = jsonString.replace(/"([^"]*)"([^"]*)"/g, '"$1$2"');
+    
+    // Rimuovi virgolette singole non escaped
+    jsonString = jsonString.replace(/(?<!\\)'([^']*)'/g, '"$1"');
 
     console.log('JSON pulito:', jsonString);
 
@@ -444,6 +459,13 @@ export const validateQuizResponse = (response: string): AiResults['interactiveLe
         fallbackJson = fallbackJson.replace(/\\+n/g, '\\n');
         fallbackJson = fallbackJson.replace(/\\+t/g, '\\t');
         fallbackJson = fallbackJson.replace(/\\+r/g, '\\r');
+        
+        // Rimuovi virgolette doppie non escaped all'interno delle stringhe
+        fallbackJson = fallbackJson.replace(/"([^"]*)"([^"]*)"([^"]*)"/g, '"$1$2$3"');
+        fallbackJson = fallbackJson.replace(/"([^"]*)"([^"]*)"/g, '"$1$2"');
+        
+        // Rimuovi virgolette singole non escaped
+        fallbackJson = fallbackJson.replace(/(?<!\\)'([^']*)'/g, '"$1"');
         
         console.log('JSON fallback pulito:', fallbackJson);
         
