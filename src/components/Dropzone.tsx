@@ -1,14 +1,15 @@
 import React, { useCallback, useState } from 'react';
-import { Upload, FileImage, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { FileImage, AlertCircle, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface DropzoneProps {
   onFilesSelected: (files: File[]) => void;
   isProcessing: boolean;
+  accept?: string;
+  maxFiles?: number;
 }
 
-export const Dropzone: React.FC<DropzoneProps> = ({ onFilesSelected, isProcessing }) => {
+export const Dropzone: React.FC<DropzoneProps> = ({ onFilesSelected, isProcessing, accept = "image/*,.pdf", maxFiles = 10 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,13 +18,13 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onFilesSelected, isProcessin
     const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
     
     for (const file of files) {
-      if (validTypes.includes(file.type)) {
+      if (validTypes.includes(file.type) && validFiles.length < maxFiles) {
         validFiles.push(file);
       }
     }
     
     if (validFiles.length !== files.length) {
-      setError('Alcuni file non sono supportati. Usa PNG, JPG o PDF.');
+      setError(`Alcuni file non sono supportati o hai superato il limite di ${maxFiles} file.`);
       setTimeout(() => setError(null), 3000);
     }
     
@@ -64,65 +65,58 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onFilesSelected, isProcessin
   }, []);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div
         className={cn(
-          "border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300",
+          "border border-dashed rounded-lg p-6 text-center transition-all duration-200 cursor-pointer",
           isDragOver 
-            ? "border-primary bg-primary/5 shadow-warm" 
-            : "border-muted-foreground/25 hover:border-primary/50",
+            ? "border-primary bg-primary/5" 
+            : "border-muted-foreground/20 hover:border-muted-foreground/40",
           isProcessing && "opacity-50 pointer-events-none"
         )}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
+        onClick={() => document.getElementById('file-upload')?.click()}
       >
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-3">
           <div className={cn(
-            "p-4 rounded-full transition-colors",
-            isDragOver ? "bg-primary text-primary-foreground" : "bg-muted"
+            "p-3 rounded-full transition-colors",
+            isDragOver ? "bg-primary text-primary-foreground" : "bg-muted/50"
           )}>
-            <FileImage className="w-8 h-8" />
+            <FileImage className="w-6 h-6" />
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold mb-2">
-              📚 Carica le pagine del libro
+            <h3 className="text-base font-medium mb-1">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5" />
+                <span>Carica le pagine del libro</span>
+              </div>
             </h3>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-sm text-muted-foreground mb-2">
               Trascina i file qui o clicca per selezionarli
             </p>
-            <p className="text-sm text-muted-foreground">
-              Supportati: PNG, JPG, PDF (max 10MB per file)
+            <p className="text-xs text-muted-foreground">
+              PNG, JPG, PDF (max {maxFiles} file)
             </p>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-center">
-        <Button
-          onClick={() => document.getElementById('file-input')?.click()}
-          disabled={isProcessing}
-          className="bg-gradient-sensei hover:shadow-warm transition-all duration-300"
-        >
-          <Upload className="w-4 h-4 mr-2" />
-          Seleziona File
-        </Button>
-      </div>
-
       <input
-        id="file-input"
+        id="file-upload"
         type="file"
         multiple
-        accept=".png,.jpg,.jpeg,.pdf"
+        accept={accept}
         onChange={handleFileInput}
         className="hidden"
       />
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg animate-bounce-in">
-          <AlertCircle className="w-4 h-4" />
-          <span className="text-sm">{error}</span>
+        <div className="flex items-center gap-2 p-2 bg-destructive/10 text-destructive rounded-md text-xs">
+          <AlertCircle className="w-3 h-3" />
+          <span>{error}</span>
         </div>
       )}
     </div>

@@ -1,140 +1,147 @@
+@import '@fontsource/inter/300.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Jiraiya Sensei Design System - Manga-inspired warm colors 
-All colors MUST be HSL.
+/* Jiraiya Sensei Design System - Modern Inter Typography & Clean Colors
+All colors MUST be HSL for consistency.
 */
 
 @layer base {
   :root {
-    --background: 35 45% 98%;
-    --foreground: 25 25% 15%;
+    /* Light Theme - Clean & Modern */
+    --background: 0 0% 97%; /* #F8F8F8 equivalent */
+    --foreground: 0 0% 13%; /* #222222 equivalent */
 
-    --card: 35 35% 96%;
-    --card-foreground: 25 25% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 13%;
 
-    --popover: 35 35% 96%;
-    --popover-foreground: 25 25% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 13%;
 
-    /* Sensei bordeaux - elegant and sophisticated */
-    --primary: 338 56% 31%;
-    --primary-foreground: 35 45% 98%;
+    /* Primary - Brand bordeaux */
+    --primary: 340 60% 35%;
+    --primary-foreground: 0 0% 100%;
     
-    /* Subtle warm secondary */
-    --secondary: 35 25% 88%;
-    --secondary-foreground: 25 25% 15%;
+    /* Secondary - GitHub gray */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 14%;
 
-    --muted: 35 20% 90%;
-    --muted-foreground: 25 15% 45%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 45%; /* #3E3E3E equivalent */
 
-    /* Accent amber */
-    --accent: 45 80% 65%;
-    --accent-foreground: 25 25% 15%;
+    /* Accent - Soft bordeaux */
+    --accent: 340 30% 95%;
+    --accent-foreground: 0 0% 13%;
 
-    --destructive: 0 75% 55%;
-    --destructive-foreground: 35 45% 98%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 35 20% 85%;
-    --input: 35 20% 92%;
-    --ring: 338 56% 31%;
+    --border: 0 0% 75%;
+    --input: 0 0% 100%;
+    --ring: 340 60% 35%;
 
-    /* Success sage green */
-    --success: 120 35% 45%;
-    --success-foreground: 35 45% 98%;
+    /* Success - Modern green */
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
 
     /* Progress colors */
-    --progress-bg: 35 15% 85%;
-    --progress-fill: 338 56% 31%;
+    --progress-bg: 0 0% 94%;
+    --progress-fill: 340 60% 35%;
 
     /* Quiz colors */
-    --quiz-correct: 120 35% 45%;
-    --quiz-incorrect: 0 75% 55%;
-    --quiz-selected: 45 80% 65%;
+    --quiz-correct: 142 70% 45%;
+    --quiz-incorrect: 0 85% 60%;
+    --quiz-selected: 340 30% 95%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
     /* Gradients */
-    --gradient-sensei: linear-gradient(135deg, hsl(338 56% 31%), hsl(338 45% 45%));
-    --gradient-warm: linear-gradient(180deg, hsl(35 45% 98%), hsl(35 25% 95%));
+    --gradient-sensei: linear-gradient(135deg, hsl(340 60% 35%), hsl(340 50% 45%));
+    --gradient-warm: linear-gradient(180deg, hsl(0 0% 97%), hsl(0 0% 94%));
     
     /* Shadows */
-    --shadow-warm: 0 4px 20px hsl(338 56% 31% / 0.15);
-    --shadow-card: 0 2px 8px hsl(25 25% 15% / 0.08);
+    --shadow-warm: 0 4px 20px hsl(340 60% 35% / 0.1);
+    --shadow-card: 0 2px 8px hsl(0 0% 13% / 0.06);
     
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 13%;
+    --sidebar-primary: 340 60% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 13%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 340 60% 35%;
   }
 
   .dark {
-    --background: 25 15% 12%;
-    --foreground: 35 25% 88%;
+    /* Dark Theme - Inverse of light theme */
+    --background: 0 0% 13%; /* #222222 equivalent */
+    --foreground: 0 0% 97%; /* #F8F8F8 equivalent */
 
-    --card: 25 15% 15%;
-    --card-foreground: 35 25% 88%;
+    --card: 0 0% 18%;
+    --card-foreground: 0 0% 97%;
 
-    --popover: 25 15% 15%;
-    --popover-foreground: 35 25% 88%;
+    --popover: 0 0% 18%;
+    --popover-foreground: 0 0% 97%;
 
-    --primary: 338 56% 45%;
-    --primary-foreground: 25 15% 12%;
+    /* Primary - Brand bordeaux for dark theme (lighter) */
+    --primary: 340 55% 65%;
+    --primary-foreground: 0 0% 13%;
 
-    --secondary: 25 10% 22%;
-    --secondary-foreground: 35 25% 88%;
+    /* Secondary - Darker gray */
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 97%;
 
-    --muted: 25 10% 22%;
-    --muted-foreground: 35 15% 65%;
+    --muted: 0 0% 25%;
+    --muted-foreground: 0 0% 65%; /* #3E3E3E inverse */
 
-    --accent: 45 75% 55%;
-    --accent-foreground: 25 15% 12%;
+    /* Accent - Lighter bordeaux for dark mode */
+    --accent: 340 40% 35%;
+    --accent-foreground: 0 0% 97%;
 
-    --destructive: 0 75% 60%;
-    --destructive-foreground: 25 15% 12%;
+    --destructive: 0 85% 65%;
+    --destructive-foreground: 0 0% 13%;
 
-    --border: 25 10% 25%;
-    --input: 25 10% 25%;
-    --ring: 338 56% 45%;
+    --border: 0 0% 25%;
+    --input: 0 0% 25%;
+    --ring: 210 100% 55%;
     
-    --success: 120 35% 50%;
-    --success-foreground: 25 15% 12%;
+    --success: 142 70% 55%;
+    --success-foreground: 0 0% 13%;
 
-    --progress-bg: 25 10% 25%;
-    --progress-fill: 338 56% 45%;
+    --progress-bg: 0 0% 25%;
+    --progress-fill: 340 55% 65%;
 
-    --quiz-correct: 120 35% 50%;
-    --quiz-incorrect: 0 75% 60%;
-    --quiz-selected: 45 75% 55%;
+    --quiz-correct: 142 70% 55%;
+    --quiz-incorrect: 0 85% 65%;
+    --quiz-selected: 340 40% 35%;
 
-    --gradient-sensei: linear-gradient(135deg, hsl(338 56% 45%), hsl(338 45% 55%));
-    --gradient-warm: linear-gradient(180deg, hsl(25 15% 12%), hsl(25 10% 18%));
+    --gradient-sensei: linear-gradient(135deg, hsl(340 55% 65%), hsl(340 50% 75%));
+    --gradient-warm: linear-gradient(180deg, hsl(0 0% 13%), hsl(0 0% 18%));
     
-    --shadow-warm: 0 4px 20px hsl(338 56% 45% / 0.2);
-    --shadow-card: 0 2px 8px hsl(25 15% 8% / 0.3);
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --shadow-warm: 0 4px 20px hsl(340 55% 65% / 0.2);
+    --shadow-card: 0 2px 8px hsl(0 0% 8% / 0.4);
+    
+    /* Sidebar */
+    --sidebar-background: 0 0% 18%;
+    --sidebar-foreground: 0 0% 97%;
+    --sidebar-primary: 340 55% 65%;
+    --sidebar-primary-foreground: 0 0% 13%;
+    --sidebar-accent: 0 0% 25%;
+    --sidebar-accent-foreground: 0 0% 97%;
+    --sidebar-border: 0 0% 30%;
+    --sidebar-ring: 340 55% 65%;
   }
 }
 
@@ -145,43 +152,60 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-weight: 400;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Hide scrollbar globally */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
   }
 
-  /* Typography improvements for Poppins */
+  body::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+
+  html {
+    /* Hide scrollbar for html element too */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+
+  /* Typography improvements for Inter */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: -0.025em;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
   }
 
   /* Button and interactive elements */
   button, input, textarea, select {
-    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   /* Card titles and headings */
   .card-title, .card-header h3, .card-header h4 {
-    font-weight: 600;
-    letter-spacing: -0.025em;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
-  /* Improved typography for Poppins */
+  /* Improved typography for Inter */
   .text-display {
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    letter-spacing: -0.025em;
     line-height: 1.2;
   }
 
   .text-heading {
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: -0.01em;
-    line-height: 1.3;
+    line-height: 1.4;
   }
 
   .text-body {
@@ -267,5 +291,141 @@ All colors MUST be HSL.
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* Override Radix UI tabs to use display: none instead of hidden */
+  /* Only apply to TabsContent, not TabsTrigger */
+  .tabs-content[data-state="inactive"] {
+    display: none !important;
+  }
+
+  /* Enhanced input visibility */
+  input, textarea, select, [data-radix-select-trigger] {
+    border-color: hsl(var(--border)) !important;
+    border-width: 1px !important;
+  }
+
+  input:focus, textarea:focus, select:focus, [data-radix-select-trigger]:focus {
+    border-color: hsl(var(--ring)) !important;
+    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2) !important;
+  }
+
+  /* Ensure input backgrounds are visible */
+  input, textarea, select, [data-radix-select-trigger] {
+    background-color: hsl(var(--input)) !important;
+  }
+
+  /* Radix UI Select specific styles */
+  [data-radix-select-trigger] {
+    height: 2rem !important;
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+  }
+
+  /* Small select triggers for consistent height with buttons */
+  [data-radix-select-trigger].h-7 {
+    height: 1.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 640px) {
+    /* Compact badges on mobile */
+    .badge {
+      font-size: 0.75rem !important;
+      padding: 0.125rem 0.5rem !important;
+      height: 1.5rem !important;
+    }
+
+    /* Ensure select triggers don't overflow on mobile */
+    [data-radix-select-trigger] {
+      min-width: 0 !important;
+      max-width: 100% !important;
+    }
+
+    /* Scroll area for filters on very small screens */
+    .filter-scroll {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .filter-scroll::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  /* iOS/Safari specific optimizations */
+  @supports (-webkit-touch-callout: none) {
+    /* Fix viewport issues on iOS Safari */
+    .min-h-screen {
+      min-height: -webkit-fill-available;
+    }
+    
+    /* Improve touch targets */
+    button, [role="button"] {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    
+    /* Smooth scrolling on iOS */
+    .overflow-y-auto, .overflow-auto {
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Fixed positioning improvements */
+    .sticky {
+      position: -webkit-sticky;
+      position: sticky;
+    }
+    
+    /* Tab navigation optimizations */
+    .mobile-tab-nav {
+      /* Prevent iOS bounce scrolling */
+      overscroll-behavior: none;
+      /* Safe area for iPhone notch/home indicator */
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+
+  /* Responsive tab content height */
+  @media (max-width: 767px) {
+    .mobile-workspace-content {
+      height: calc(100vh - 3.5rem - 60px - env(safe-area-inset-bottom));
+    }
+    
+      /* Analysis content scrolling on mobile */
+  .analysis-content-mobile {
+    max-height: none !important;
+    height: auto !important;
+    overflow-y: visible !important;
+  }
+  
+  /* Hide scrollbar for main container */
+  .hide-scrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+  }
+
+  [data-radix-select-trigger]:hover {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+  }
+
+  /* Dark mode specific adjustments */
+  .dark [data-radix-select-trigger] {
+    background-color: hsl(var(--input)) !important;
+    border-color: hsl(var(--border)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .dark [data-radix-select-trigger]:hover {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
   }
 }

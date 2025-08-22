@@ -1,10 +1,11 @@
-import type { AiResults } from '@/types';
+import type { AiResults, Methodology } from '@/types';
 import { OPENAI_CONFIG, OPENAI_ERRORS } from '@/config/openai';
+import { getDemoData, getDemoDataWithoutQuiz } from './demoData';
 
 // Cache semplice per evitare di ri-analizzare lo stesso testo
-const analysisCache = new Map<string, AiResults>();
+const analysisCache = new Map<string, string>();
 
-// Prompt per l'analisi letteraria
+// Prompt per l'analisi letteraria in Markdown
 const LITERARY_ANALYSIS_PROMPT = `Sei un critico letterario e simbolico di livello mondiale, specializzato nell'analisi profonda di testi narrativi. La tua competenza include interpretazione tematica, simbolica, filosofica e psicologica.
 
 ⸻ MISSIONE
@@ -27,31 +28,55 @@ Analizza il testo fornito fornendo un'interpretazione completa e approfondita ch
 • **Applicabilità**: Rendi le lezioni concrete e utilizzabili
 
 ⸻ OUTPUT FORMAT
-Restituisci l'analisi in formato JSON con questa struttura esatta:
+Restituisci l'analisi in formato **Markdown** ben strutturato con le seguenti sezioni:
 
-{
-  "plotSummary": "Sintesi narrativa dettagliata (3-4 frasi) che catturi l'essenza della storia, i personaggi principali e la progressione degli eventi",
-  "symbolicAnalysis": {
-    "keyElements": [
-      {
-        "element": "Nome specifico dell'elemento simbolico",
-        "description": "Descrizione dettagliata di come appare nel testo",
-        "symbolicMeaning": "Interpretazione simbolica approfondita con riferimenti archetipici",
-        "culturalReferences": "Riferimenti specifici a miti, religioni, culture, opere d'arte o letteratura"
-      }
-    ]
-  },
-  "deepMeaning": {
-    "philosophicalThemes": ["Tema filosofico 1", "Tema filosofico 2", "Tema filosofico 3", "Tema filosofico 4"],
-    "existentialInterpretation": "Interpretazione esistenziale approfondita che esplora il significato umano universale del testo",
-    "universalTruths": "Verdà universali e principi fondamentali espressi dal testo"
-  },
-  "personalLesson": {
-    "mainInsight": "Principale lezione di vita, formulata in modo chiaro e memorabile",
-    "practicalApplications": ["Applicazione pratica specifica 1", "Applicazione pratica specifica 2", "Applicazione pratica specifica 3"],
-    "reflectiveQuestion": "Domanda riflessiva profonda che stimoli l'introspezione personale"
-  }
-}
+# 📖 Analisi Letteraria
+
+## 📝 Sintesi Narrativa
+[Sintesi narrativa dettagliata (3-4 frasi) che catturi l'essenza della storia, i personaggi principali e la progressione degli eventi]
+
+## 🔍 Analisi Simbolica
+
+### Elementi Chiave
+
+#### [Nome Elemento 1]
+- **Descrizione**: [Descrizione dettagliata di come appare nel testo]
+- **Significato Simbolico**: [Interpretazione simbolica approfondita con riferimenti archetipici]
+- **Riferimenti Culturali**: [Riferimenti specifici a miti, religioni, culture, opere d'arte o letteratura]
+
+#### [Nome Elemento 2]
+- **Descrizione**: [Descrizione dettagliata di come appare nel testo]
+- **Significato Simbolico**: [Interpretazione simbolica approfondita con riferimenti archetipici]
+- **Riferimenti Culturali**: [Riferimenti specifici a miti, religioni, culture, opere d'arte o letteratura]
+
+[Continua per 3-5 elementi chiave]
+
+## 🧠 Significato Profondo
+
+### Temi Filosofici
+- [Tema filosofico 1]
+- [Tema filosofico 2]
+- [Tema filosofico 3]
+- [Tema filosofico 4]
+
+### Interpretazione Esistenziale
+[Interpretazione esistenziale approfondita che esplora il significato umano universale del testo]
+
+### Verità Universali
+[Verdà universali e principi fondamentali espressi dal testo]
+
+## 💡 Lezione Personale
+
+### Insight Principale
+[Principale lezione di vita, formulata in modo chiaro e memorabile]
+
+### Applicazioni Pratiche
+1. [Applicazione pratica specifica 1]
+2. [Applicazione pratica specifica 2]
+3. [Applicazione pratica specifica 3]
+
+### Domanda Riflessiva
+> [Domanda riflessiva profonda che stimoli l'introspezione personale]
 
 ⸻ ISTRUZIONI SPECIFICHE
 • **Sintesi**: Sii preciso ma coinvolgente, cattura l'atmosfera del testo
@@ -60,6 +85,7 @@ Restituisci l'analisi in formato JSON con questa struttura esatta:
 • **Interpretazione esistenziale**: Sviluppa un'analisi di 2-3 frasi ben strutturate
 • **Applicazioni pratiche**: Fornisci 3 esempi concreti e specifici
 • **Domanda riflessiva**: Formula una domanda che stimoli l'introspezione
+• **Formato**: Usa solo Markdown standard, senza HTML o formattazione speciale
 
 ⸻ QUALITÀ RICHIESTA
 • **Accuratezza**: Ogni interpretazione deve essere supportata dal testo
@@ -72,7 +98,7 @@ Analizza il seguente testo con la massima attenzione e profondità:
 `;
 
 // Funzione principale per chiamare l'AI con retry automatico
-export const callAI = async (text: string, apiKey?: string): Promise<AiResults> => {
+export const callAI = async (text: string, apiKey?: string): Promise<string> => {
   const key = apiKey || OPENAI_CONFIG.API_KEY;
   
   if (!key) {
@@ -90,8 +116,37 @@ export const callAI = async (text: string, apiKey?: string): Promise<AiResults> 
 
   for (let attempt = 1; attempt <= OPENAI_CONFIG.MAX_RETRIES; attempt++) {
     try {
+      console.log(`🔄 Tentativo ${attempt}/${OPENAI_CONFIG.MAX_RETRIES}`);
+      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), OPENAI_CONFIG.TIMEOUT);
+
+      const requestBody = {
+        model: OPENAI_CONFIG.MODEL,
+        messages: [
+          {
+            role: 'system',
+            content: LITERARY_ANALYSIS_PROMPT
+          },
+          {
+            role: 'user',
+            content: text
+          }
+        ],
+        max_tokens: OPENAI_CONFIG.MAX_TOKENS,
+        temperature: OPENAI_CONFIG.TEMPERATURE,
+        top_p: OPENAI_CONFIG.TOP_P,
+        frequency_penalty: OPENAI_CONFIG.FREQUENCY_PENALTY,
+        presence_penalty: OPENAI_CONFIG.PRESENCE_PENALTY,
+      };
+
+      console.log('📤 Request URL:', `${OPENAI_CONFIG.BASE_URL}/chat/completions`);
+      console.log('📤 Request Headers:', {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${key.substring(0, 10)}...`
+      });
+      console.log('📤 Request Body (model):', requestBody.model);
+      console.log('📤 Request Body (max_tokens):', requestBody.max_tokens);
 
       const response = await fetch(`${OPENAI_CONFIG.BASE_URL}/chat/completions`, {
         method: 'POST',
@@ -99,60 +154,50 @@ export const callAI = async (text: string, apiKey?: string): Promise<AiResults> 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${key}`,
         },
-        body: JSON.stringify({
-          model: OPENAI_CONFIG.MODEL,
-          messages: [
-            {
-              role: 'system',
-              content: LITERARY_ANALYSIS_PROMPT
-            },
-            {
-              role: 'user',
-              content: text
-            }
-          ],
-          max_tokens: OPENAI_CONFIG.MAX_TOKENS,
-          temperature: OPENAI_CONFIG.TEMPERATURE,
-          top_p: OPENAI_CONFIG.TOP_P,
-          frequency_penalty: OPENAI_CONFIG.FREQUENCY_PENALTY,
-          presence_penalty: OPENAI_CONFIG.PRESENCE_PENALTY,
-        }),
+        body: JSON.stringify(requestBody),
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
 
+      console.log('📥 Response Status:', response.status);
+      console.log('📥 Response Status Text:', response.statusText);
+      console.log('📥 Response Headers:', Object.fromEntries(response.headers.entries()));
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.log('❌ Error Response Data:', errorData);
       
       if (response.status === 401) {
+        console.log('❌ 401 Unauthorized - Chiave API non valida');
         throw new Error(OPENAI_ERRORS.INVALID_API_KEY);
       } else if (response.status === 429) {
+        console.log('❌ 429 Rate Limit - Troppe richieste');
         throw new Error(OPENAI_ERRORS.RATE_LIMIT_EXCEEDED);
       } else if (response.status === 402) {
+        console.log('❌ 402 Payment Required - Quota esaurita');
         throw new Error(OPENAI_ERRORS.QUOTA_EXCEEDED);
       } else {
+        console.log(`❌ ${response.status} Error - ${errorData.error?.message || response.statusText}`);
         throw new Error(`${OPENAI_ERRORS.API_ERROR}: ${errorData.error?.message || response.statusText}`);
       }
     }
 
     const data = await response.json();
+    console.log('✅ Success Response Data:', data);
+    
     const content = data.choices[0]?.message?.content;
     
     if (!content) {
+      console.log('❌ No content in response');
       throw new Error(OPENAI_ERRORS.API_ERROR);
     }
 
-      const aiResults = validateAIResponse(content);
-      if (!aiResults) {
-        throw new Error('Risposta AI non valida o malformata');
-      }
-
       // Salva in cache
-      analysisCache.set(textHash, aiResults);
-      console.log('Risultato salvato in cache');
+      analysisCache.set(textHash, content);
+      console.log('💾 Risultato salvato in cache');
 
-      return aiResults;
+      return content;
 
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(OPENAI_ERRORS.UNKNOWN_ERROR);
@@ -409,57 +454,153 @@ export const validateQuizResponse = (response: string): AiResults['interactiveLe
   }
 };
 
-export const validateAIResponse = (response: string): AiResults | null => {
-  try {
-    const jsonMatch = response.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      console.error('Nessun JSON trovato nella risposta:', response);
-      return null;
+// Funzione per analisi con metodologia personalizzata
+export const callAIWithMethodology = async (
+  text: string, 
+  methodology: Methodology, 
+  apiKey?: string
+): Promise<string> => {
+  // TODO: DOMANI - Sostituire con chiamata API reale
+  // Per ora usa sempre i dati demo per testare l'output
+  console.log('🎭 Usando dati demo per analisi');
+  console.log('📝 Metodologia:', methodology.name);
+  console.log('📄 Lunghezza testo:', text.length);
+  
+  // Simula delay API
+  await new Promise(resolve => setTimeout(resolve, 1500));
+  
+  // Restituisce dati demo formattati come JSON (come farebbe l'API reale)
+  const demoResponse = {
+    transcription: text.substring(0, 100) + "...",
+    plotSummary: "Il testo presenta una narrazione complessa che esplora temi universali attraverso una struttura simbolica ricca di significati nascosti. La storia si sviluppa attraverso una progressione di eventi che riflettono profondi archetipi umani.",
+    symbolicAnalysis: {
+      keyElements: [
+        {
+          element: "Il Castello",
+          description: "Un edificio imponente che domina il paesaggio, con torri che si innalzano verso il cielo",
+          symbolicMeaning: "Rappresenta la mente umana e la ricerca di conoscenza superiore",
+          culturalReferences: "Simbolo archetipico presente in molte culture, dal Graal ai castelli delle fiabe"
+        },
+        {
+          element: "I Destini Incrociati",
+          description: "Percorsi che si intersecano e si influenzano reciprocamente",
+          symbolicMeaning: "La complessità delle scelte umane e l'interconnessione delle vite",
+          culturalReferences: "Concetto presente nella filosofia orientale e nella letteratura moderna"
+        },
+        {
+          element: "La Soglia",
+          description: "Un passaggio che separa due mondi o stati di coscienza",
+          symbolicMeaning: "Il momento di trasformazione e crescita personale",
+          culturalReferences: "Simbolo universale presente in miti e rituali di iniziazione"
+        }
+      ]
+    },
+    deepMeaning: {
+      philosophicalThemes: [
+        "La ricerca di identità e significato",
+        "L'interconnessione tra destino e libero arbitrio",
+        "La trasformazione attraverso l'esperienza",
+        "La dualità tra ordine e caos"
+      ],
+      existentialInterpretation: "Il testo esplora la condizione umana attraverso la metafora del viaggio interiore, suggerendo che ogni individuo deve attraversare il proprio 'castello' per raggiungere una comprensione più profonda di sé e del mondo.",
+      universalTruths: "La crescita personale richiede coraggio, la conoscenza si acquisisce attraverso l'esperienza diretta, e ogni scelta ha conseguenze che si estendono oltre l'individuo."
+    },
+    personalLesson: {
+      mainInsight: "Ogni ostacolo nella vita è un'opportunità di crescita, e il vero viaggio è quello interiore che ci porta a scoprire chi siamo realmente.",
+      practicalApplications: [
+        "Affronta le sfide come opportunità di apprendimento",
+        "Rifletti sulle tue scelte e le loro conseguenze",
+        "Cerca la saggezza nelle esperienze quotidiane"
+      ],
+      reflectiveQuestion: "Quale 'castello' stai attualmente attraversando nella tua vita, e cosa ti sta insegnando questo viaggio?"
     }
-
-    const parsed = JSON.parse(jsonMatch[0]);
-    
-    if (!parsed.plotSummary || 
-        !parsed.symbolicAnalysis?.keyElements || 
-        !parsed.deepMeaning?.philosophicalThemes ||
-        !parsed.deepMeaning?.existentialInterpretation ||
-        !parsed.deepMeaning?.universalTruths ||
-        !parsed.personalLesson?.mainInsight ||
-        !parsed.personalLesson?.practicalApplications ||
-        !parsed.personalLesson?.reflectiveQuestion) {
-      console.error('Struttura JSON incompleta:', parsed);
-      return null;
-    }
-
-    return {
-      transcription: '',
-      plotSummary: parsed.plotSummary,
-      symbolicAnalysis: {
-        keyElements: parsed.symbolicAnalysis.keyElements.map((el: Record<string, string>) => ({
-          element: el.element || '',
-          description: el.description || '',
-          symbolicMeaning: el.symbolicMeaning || '',
-          culturalReferences: el.culturalReferences || ''
-        }))
-      },
-      deepMeaning: {
-        philosophicalThemes: Array.isArray(parsed.deepMeaning.philosophicalThemes) 
-          ? parsed.deepMeaning.philosophicalThemes 
-          : [parsed.deepMeaning.philosophicalThemes],
-        existentialInterpretation: parsed.deepMeaning.existentialInterpretation,
-        universalTruths: parsed.deepMeaning.universalTruths
-      },
-      personalLesson: {
-        mainInsight: parsed.personalLesson.mainInsight,
-        practicalApplications: Array.isArray(parsed.personalLesson.practicalApplications)
-          ? parsed.personalLesson.practicalApplications
-          : [parsed.personalLesson.practicalApplications],
-        reflectiveQuestion: parsed.personalLesson.reflectiveQuestion
-      }
-    };
-
-  } catch (error) {
-    console.error('Errore nel parsing della risposta AI:', error);
-	return null;
-  }
+  };
+  
+  // Restituisce JSON stringificato (come farebbe l'API reale)
+  return JSON.stringify(demoResponse, null, 2);
 };
+
+// Funzione per generare quiz con metodologia personalizzata
+export const generateQuizWithMethodology = async (
+  aiResults: AiResults, 
+  methodology: Methodology,
+  apiKey?: string
+): Promise<AiResults['interactiveLearning']> => {
+  // TODO: DOMANI - Sostituire con chiamata API reale
+  // Per ora usa sempre i dati demo per testare l'output
+  console.log('🎭 Usando dati demo per quiz');
+  console.log('📝 Metodologia:', methodology.name);
+  
+  // Simula delay API
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  // Restituisce dati demo per quiz
+  const demoQuizData = {
+    quiz: [
+      {
+        id: "1",
+        question: "Quale elemento simbolico rappresenta la mente umana nel testo?",
+        options: [
+          "Il castello",
+          "La foresta", 
+          "Il fiume",
+          "La montagna"
+        ],
+        correctAnswer: 0,
+        explanation: "Il castello simboleggia la mente umana e la ricerca di conoscenza superiore.",
+        difficulty: "medium"
+      },
+      {
+        id: "2", 
+        question: "Cosa rappresentano i 'destini incrociati'?",
+        options: [
+          "Le strade della città",
+          "La complessità delle scelte umane",
+          "I sentieri del bosco",
+          "Le linee della mano"
+        ],
+        correctAnswer: 1,
+        explanation: "I destini incrociati rappresentano la complessità delle scelte umane e l'interconnessione delle vite.",
+        difficulty: "easy"
+      },
+      {
+        id: "3",
+        question: "Quale tema filosofico è centrale nel testo?",
+        options: [
+          "La bellezza della natura",
+          "La ricerca di identità e significato",
+          "L'importanza del denaro",
+          "La velocità della vita moderna"
+        ],
+        correctAnswer: 1,
+        explanation: "Il tema centrale è la ricerca di identità e significato attraverso il viaggio interiore.",
+        difficulty: "hard"
+      }
+    ],
+    flashcards: [
+      {
+        id: "1",
+        front: "Il Castello",
+        back: "Simboleggia la mente umana e la ricerca di conoscenza superiore"
+      },
+      {
+        id: "2", 
+        front: "I Destini Incrociati",
+        back: "Rappresentano la complessità delle scelte umane e l'interconnessione delle vite"
+      },
+      {
+        id: "3",
+        front: "La Soglia", 
+        back: "Simbolo del momento di trasformazione e crescita personale"
+      }
+    ],
+    reflectiveQuestions: [
+      "Quale 'castello' stai attualmente attraversando nella tua vita?",
+      "Come puoi applicare le lezioni del testo alle tue scelte quotidiane?",
+      "Quale elemento simbolico risuona di più con la tua esperienza personale?"
+    ]
+  };
+  
+  return demoQuizData;
+};
+

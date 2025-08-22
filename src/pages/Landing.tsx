@@ -235,7 +235,7 @@ const Landing: React.FC = () => {
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-                          <Link to="/app" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                                                     <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <img src="/logo.png" alt="Jiraiya Sensei" className="w-8 h-8" />
               <div>
                 <h1 className="text-lg font-bold">Jiraiya Sensei</h1>
@@ -246,7 +246,7 @@ const Landing: React.FC = () => {
               <Link to="/how-it-works" className="text-sm text-muted-foreground hover:text-primary transition-colors hidden sm:block">
                 Come Funziona
               </Link>
-              <Link to="/app">
+              <Link to="/">
                 <Button size="sm">
                   Prova Ora
                 </Button>
@@ -262,7 +262,7 @@ const Landing: React.FC = () => {
           <div className="max-w-4xl mx-auto text-center space-y-8">
             <div className="space-y-4">
               <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                🎓 Per Insegnanti e Appassionati di Lettura
+                Per Insegnanti e Appassionati di Lettura
               </Badge>
               <h1 className="text-4xl md:text-6xl font-bold leading-tight">
                 Trasforma la
@@ -278,7 +278,7 @@ const Landing: React.FC = () => {
             </div>
 
                          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-               <Link to="/app">
+               <Link to="/">
                  <Button size="lg" className="text-lg px-8 py-6">
                    Inizia Gratis Ora
                    <ArrowRight className="w-5 h-5 ml-2" />
@@ -378,43 +378,144 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* How It Works Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4">Caratteristiche Avanzate</h2>
+              <h2 className="text-3xl font-bold mb-4">Come Funziona</h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Tecnologie all'avanguardia unite alla saggezza di Jiraiya per un'esperienza di apprendimento unica
+                Tre semplici passi per trasformare qualsiasi testo in una ricca analisi letteraria
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {features.map((feature, index) => (
-                <Card key={index} className="border-none shadow-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+              {/* Step 1: Create Project */}
+              <Card className="border-none shadow-lg text-center">
+                <CardContent className="p-8">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl font-bold text-blue-600">1</span>
+                  </div>
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <BookOpen className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Crea un Progetto</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Inizia creando un nuovo progetto con un titolo descrittivo. 
+                    Scegli la metodologia di analisi più adatta al tuo testo.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Step 2: Upload Pages */}
+              <Card className="border-none shadow-lg text-center">
                   <CardContent className="p-8">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <feature.icon className="w-6 h-6 text-primary" />
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl font-bold text-green-600">2</span>
+                  </div>
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <Camera className="w-6 h-6 text-primary" />
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                        <p className="text-muted-foreground mb-4 leading-relaxed">
-                          {feature.description}
-                        </p>
-                        <ul className="space-y-2">
-                          {feature.details.map((detail, detailIndex) => (
-                            <li key={detailIndex} className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                              {detail}
-                            </li>
-                          ))}
-                        </ul>
+                  <h3 className="text-xl font-semibold mb-3">Carica le Pagine</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Carica foto delle pagine del libro o file PDF. 
+                    Il nostro OCR intelligente trasformerà automaticamente il testo in digitale.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Step 3: AI Analysis */}
+              <Card className="border-none shadow-lg text-center">
+                <CardContent className="p-8">
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl font-bold text-purple-600">3</span>
                       </div>
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <Brain className="w-6 h-6 text-primary" />
                     </div>
+                  <h3 className="text-xl font-semibold mb-3">Analizza con AI</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    L'AI analizzerà il testo secondo la metodologia scelta, 
+                    rivelando simboli, temi e significati nascosti.
+                  </p>
                   </CardContent>
                 </Card>
-              ))}
+            </div>
+
+            {/* Workspace Features */}
+            <div className="bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900/20 dark:to-blue-900/20 rounded-2xl p-8">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold mb-4">Il Tuo Workspace</h3>
+                <p className="text-muted-foreground">
+                  Una volta completata l'analisi, avrai accesso a un workspace completo
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="flex items-center gap-3 p-4 bg-white dark:bg-slate-800 rounded-lg">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Fonti</h4>
+                    <p className="text-sm text-muted-foreground">Gestisci le pagine caricate</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 p-4 bg-white dark:bg-slate-800 rounded-lg">
+                  <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <Brain className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Analisi</h4>
+                    <p className="text-sm text-muted-foreground">Visualizza i risultati AI</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 p-4 bg-white dark:bg-slate-800 rounded-lg">
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Target className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Studio</h4>
+                    <p className="text-sm text-muted-foreground">Quiz e materiali didattici</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Methodologies */}
+            <div className="mt-12 text-center">
+              <h3 className="text-2xl font-bold mb-4">Metodologie Personalizzabili</h3>
+              <p className="text-muted-foreground mb-8 max-w-3xl mx-auto">
+                Scegli tra metodologie pre-configurate o crea le tue per adattare l'analisi AI alle tue esigenze specifiche
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-4 bg-white dark:bg-slate-800 rounded-lg border">
+                  <Settings className="w-8 h-8 text-primary mx-auto mb-2" />
+                  <h4 className="font-semibold text-sm">Critico Letterario</h4>
+                  <p className="text-xs text-muted-foreground">Analisi simbolica avanzata</p>
+                </div>
+                
+                <div className="p-4 bg-white dark:bg-slate-800 rounded-lg border">
+                  <BookMarked className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                  <h4 className="font-semibold text-sm">Storico-Culturale</h4>
+                  <p className="text-xs text-muted-foreground">Contesto storico e sociale</p>
+                </div>
+                
+                <div className="p-4 bg-white dark:bg-slate-800 rounded-lg border">
+                  <Brain className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+                  <h4 className="font-semibold text-sm">Psicoanalitico</h4>
+                  <p className="text-xs text-muted-foreground">Analisi psicologica</p>
+                </div>
+                
+                <div className="p-4 bg-white dark:bg-slate-800 rounded-lg border">
+                  <Lightbulb className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
+                  <h4 className="font-semibold text-sm">Personalizzata</h4>
+                  <p className="text-xs text-muted-foreground">Crea la tua metodologia</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -455,186 +556,60 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-            {/* Future Plans Section */}
+      {/* Future Roadmap Section */}
       <section className="py-20 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900/20 dark:to-blue-900/20">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 mb-4">
-                🚀 Roadmap Futura
-              </Badge>
-              <h2 className="text-3xl font-bold mb-4">Tre Livelli di Esperienza</h2>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Stiamo sviluppando un sistema completo di autenticazione e gestione utenti 
-                per offrire esperienze personalizzate per ogni tipo di utente.
-              </p>
-            </div>
+          <div className="max-w-4xl mx-auto text-center">
+                          <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 mb-4">
+              Prossimi Sviluppi
+            </Badge>
+            <h2 className="text-3xl font-bold mb-4">Il Futuro di Jiraiya Sensei</h2>
+            <p className="text-xl text-muted-foreground mb-12">
+              Stiamo lavorando per trasformare Jiraiya Sensei in una piattaforma educativa completa
+            </p>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {Object.entries(futurePlans).map(([key, plan]) => (
-                <Card key={key} className="border-none shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-                  <CardHeader className="text-center pb-6">
-                    <div className={`w-16 h-16 mx-auto mb-4 bg-${plan.color.replace('text-', '')}/10 rounded-full flex items-center justify-center`}>
-                      <plan.icon className={`w-8 h-8 ${plan.color}`} />
-                    </div>
-                    <CardTitle className="text-2xl">{plan.title}</CardTitle>
-                    <p className="text-muted-foreground">{plan.description}</p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <ul className="space-y-3">
-                      {plan.features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span className="text-sm text-muted-foreground">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="pt-4 border-t border-border">
-                      <Badge variant="outline" className="text-xs">
-                        In Sviluppo
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Development Roadmap */}
-            <div className="mt-16">
-              <div className="text-center mb-12">
-                <Badge variant="secondary" className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-blue-600 border-blue-200 mb-4">
-                  📈 Roadmap di Sviluppo
-                </Badge>
-                <h3 className="text-2xl font-bold mb-4">Piano di Crescita</h3>
-                <p className="text-muted-foreground max-w-2xl mx-auto">
-                  Una roadmap chiara per trasformare Jiraiya Sensei in una piattaforma educativa completa
-                </p>
-              </div>
-
-              <div className="relative">
-                {/* Timeline Line - Hidden on mobile, visible on desktop */}
-                <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 rounded-full"></div>
-
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Phase 1 - Current */}
-                <div className="relative mb-8 md:mb-16 timeline-item">
-                  <div className="flex flex-col md:flex-row items-center">
-                    <div className="w-full md:w-1/2 md:pr-8 md:text-right mb-4 md:mb-0">
-                      <div className="bg-white dark:bg-slate-800 rounded-lg p-4 md:p-6 shadow-lg border border-blue-200 dark:border-blue-800 roadmap-card">
-                        <div className="flex items-center justify-center md:justify-end gap-3 mb-3">
-                          <Badge className="bg-blue-500 text-white">Fase 1</Badge>
-                          <span className="text-sm text-muted-foreground">Q1 2024</span>
-                        </div>
-                        <h4 className="text-lg font-semibold mb-2 text-center md:text-left">Versione Beta</h4>
-                        <ul className="text-sm text-muted-foreground space-y-1">
-                          <li>• OCR intelligente per immagini</li>
-                          <li>• Analisi letteraria AI avanzata</li>
-                          <li>• Quiz interattivi generati automaticamente</li>
-                          <li>• Export in formato Markdown</li>
-                        </ul>
-                        <div className="mt-4 flex items-center justify-center md:justify-end gap-2">
-                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                          <span className="text-xs text-green-600 font-medium">Completato</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-4 h-4 bg-blue-500 rounded-full border-4 border-white dark:border-slate-800 shadow-lg z-10 timeline-dot"></div>
-                    <div className="w-full md:w-1/2 md:pl-8"></div>
+              <Card className="border-none shadow-lg">
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-6 h-6 text-green-600" />
                   </div>
-                </div>
-
-                {/* Phase 2 - Authentication */}
-                <div className="relative mb-8 md:mb-16 timeline-item">
-                  <div className="flex flex-col md:flex-row items-center">
-                    <div className="w-full md:w-1/2 md:pr-8 hidden md:block"></div>
-                    <div className="w-4 h-4 bg-purple-500 rounded-full border-4 border-white dark:border-slate-800 shadow-lg z-10 timeline-dot"></div>
-                    <div className="w-full md:w-1/2 md:pl-8 mt-4 md:mt-0">
-                      <div className="bg-white dark:bg-slate-800 rounded-lg p-4 md:p-6 shadow-lg border border-purple-200 dark:border-purple-800 roadmap-card">
-                        <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
-                          <Badge className="bg-purple-500 text-white">Fase 2</Badge>
-                          <span className="text-sm text-muted-foreground">Q2 2024</span>
-                        </div>
-                        <h4 className="text-lg font-semibold mb-2 text-center md:text-left">Sistema di Autenticazione</h4>
-                        <ul className="text-sm text-muted-foreground space-y-1">
-                          <li>• Registrazione e login utenti</li>
-                          <li>• Profili personalizzati</li>
-                          <li>• Salvataggio analisi</li>
-                          <li>• Dashboard utente</li>
-                        </ul>
-                        <div className="mt-4 flex items-center justify-center md:justify-start gap-2">
-                          <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                          <span className="text-xs text-yellow-600 font-medium">In Sviluppo</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Phase 3 - Teacher Features */}
-                <div className="relative mb-8 md:mb-16 timeline-item">
-                  <div className="flex flex-col md:flex-row items-center">
-                    <div className="w-full md:w-1/2 md:pr-8 md:text-right mb-4 md:mb-0">
-                      <div className="bg-white dark:bg-slate-800 rounded-lg p-4 md:p-6 shadow-lg border border-green-200 dark:border-green-800 roadmap-card">
-                        <div className="flex items-center justify-center md:justify-end gap-3 mb-3">
-                          <Badge className="bg-green-500 text-white">Fase 3</Badge>
-                          <span className="text-sm text-muted-foreground">Q3 2024</span>
-                        </div>
-                        <h4 className="text-lg font-semibold mb-2 text-center md:text-left">Piattaforma Educativa</h4>
-                        <ul className="text-sm text-muted-foreground space-y-1">
-                          <li>• Gestione classi per insegnanti</li>
-                          <li>• Assegnazione letture</li>
-                          <li>• Monitoraggio progressi studenti</li>
-                          <li>• Dashboard analitiche</li>
-                        </ul>
-                        <div className="mt-4 flex items-center justify-center md:justify-end gap-2">
-                          <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                          <span className="text-xs text-gray-500 font-medium">Pianificato</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-4 h-4 bg-green-500 rounded-full border-4 border-white dark:border-slate-800 shadow-lg z-10 timeline-dot"></div>
-                    <div className="w-full md:w-1/2 md:pl-8"></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Investment Highlights */}
-              <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-                <Card className="border-none shadow-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 investment-highlight">
-                  <CardContent className="p-4 md:p-6 text-center">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
-                      <Users className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                    </div>
-                    <h4 className="font-semibold mb-2 text-sm md:text-base">Mercato Target</h4>
-                    <p className="text-xs md:text-sm text-muted-foreground">
-                      Insegnanti, studenti e appassionati di letteratura - mercato globale in crescita
+                  <Badge className="bg-green-500 text-white mb-3">Completato</Badge>
+                  <h3 className="text-lg font-semibold mb-3">Versione Beta</h3>
+                  <p className="text-sm text-muted-foreground">
+                    OCR intelligente, analisi AI avanzata e quiz interattivi disponibili ora
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-none shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/20 dark:to-purple-900/20 investment-highlight">
-                  <CardContent className="p-4 md:p-6 text-center">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
-                      <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-white" />
+              {/* Phase 2 - In Progress */}
+              <Card className="border-none shadow-lg">
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Clock className="w-6 h-6 text-yellow-600" />
                     </div>
-                    <h4 className="font-semibold mb-2 text-sm md:text-base">Modello di Business</h4>
-                    <p className="text-xs md:text-sm text-muted-foreground">
-                      Freemium + abbonamenti premium + licenze istituzionali
+                  <Badge className="bg-yellow-500 text-white mb-3">In Sviluppo</Badge>
+                  <h3 className="text-lg font-semibold mb-3">Sistema Utenti</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Registrazione, profili personalizzati e salvataggio delle analisi
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-none shadow-lg bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 investment-highlight sm:col-span-2 lg:col-span-1">
-                  <CardContent className="p-4 md:p-6 text-center">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
-                      <Zap className="w-5 h-5 md:w-6 md:h-6 text-white" />
+              {/* Phase 3 - Planned */}
+              <Card className="border-none shadow-lg">
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <GraduationCap className="w-6 h-6 text-blue-600" />
                     </div>
-                    <h4 className="font-semibold mb-2 text-sm md:text-base">Tecnologia</h4>
-                    <p className="text-xs md:text-sm text-muted-foreground">
-                      AI avanzata, OCR intelligente
+                  <Badge variant="outline" className="mb-3">Pianificato</Badge>
+                  <h3 className="text-lg font-semibold mb-3">Piattaforma Educativa</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Gestione classi, assegnazioni e monitoraggio progressi per insegnanti
                     </p>
                   </CardContent>
                 </Card>
-              </div>
             </div>
           </div>
         </div>
@@ -653,7 +628,7 @@ const Landing: React.FC = () => {
               Questa è la versione beta con tutte le funzionalità core già disponibili.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/app">
+              <Link to="/">
                 <Button size="lg" variant="secondary" className="text-lg px-8 py-6">
                   Prova Ora
                   <ArrowRight className="w-5 h-5 ml-2" />
@@ -666,7 +641,7 @@ const Landing: React.FC = () => {
               </Link>
             </div>
             <p className="text-sm opacity-75 mt-6">
-              🚀 Sistema di autenticazione e gestione utenti in arrivo
+              Sistema di autenticazione e gestione utenti in arrivo
             </p>
           </div>
         </div>

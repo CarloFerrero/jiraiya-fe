@@ -1,6 +1,46 @@
+// Function to get API key from multiple sources
+const getApiKey = (): string => {
+  // 1. Runtime override (set by user in settings)
+  if ((window as any).__OPENAI_API_KEY) {
+    return (window as any).__OPENAI_API_KEY;
+  }
+  
+  // 2. localStorage (user preference)
+  if (typeof window !== 'undefined') {
+    const storedKey = localStorage.getItem('openai_api_key');
+    if (storedKey) {
+      return storedKey;
+    }
+  }
+  
+  // 3. Environment variable (fallback)
+  const envKey = import.meta.env.VITE_OPENAI_API_KEY;
+  return envKey || '';
+};
+
+// Cache the API key to avoid repeated calls
+let cachedApiKey: string | null = null;
+let cacheInitialized = false;
+
+const getCachedApiKey = (): string => {
+  if (!cacheInitialized) {
+    cachedApiKey = getApiKey();
+    cacheInitialized = true;
+  }
+  return cachedApiKey || '';
+};
+
+// Function to refresh the cache (for when user changes settings)
+export const refreshApiKeyCache = (): void => {
+  cacheInitialized = false;
+  cachedApiKey = null;
+};
+
 // OpenAI API Configuration
 export const OPENAI_CONFIG = {
-  API_KEY: import.meta.env.VITE_OPENAI_API_KEY || '',
+  get API_KEY() {
+    return getCachedApiKey();
+  },
   BASE_URL: 'https://api.openai.com/v1',
   TIMEOUT: 60000,
   MAX_RETRIES: 3,

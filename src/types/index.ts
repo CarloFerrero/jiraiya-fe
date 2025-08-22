@@ -16,21 +16,12 @@ export interface SymbolicElement {
 }
 
 export interface AiResults {
+  plotSummary: any;
+  symbolicAnalysis: any;
+  deepMeaning: any;
+  personalLesson: any;
   transcription: string;
-  plotSummary: string;
-  symbolicAnalysis: {
-    keyElements: SymbolicElement[];
-  };
-  deepMeaning: {
-    philosophicalThemes: string[];
-    existentialInterpretation: string;
-    universalTruths: string;
-  };
-  personalLesson: {
-    mainInsight: string;
-    practicalApplications: string[];
-    reflectiveQuestion: string;
-  };
+  markdownAnalysis: string; // Analisi in formato markdown
   interactiveLearning?: InteractiveLearning;
 }
 
@@ -41,14 +32,20 @@ export interface AppState {
   mergedText: string;
   aiResults: AiResults | null;
   ui: {
+    leftPaneOpen: boolean;
+    rightPaneOpen: boolean;
+    theme: 'light' | 'dark' | 'system';
     isProcessingOCR: boolean;
     isCallingAI: boolean;
-    apiKey?: string;
-    activeTab: 'plot' | 'symbolic' | 'meaning' | 'lesson';
-    draggedPage?: string;
-    currentStep: AppStep;
-    isDemoMode: boolean;
-    isStudyMode: boolean;
+    isGeneratingQuiz: boolean;
+  };
+  analysis: {
+    lastAiResultRaw?: string;
+    lastAiResultParsed?: AiResults;
+  };
+  quiz: {
+    items: QuizQuestion[];
+    lastScore?: { correct: number; total: number };
   };
 }
 
@@ -86,4 +83,61 @@ export interface InteractiveLearning {
   quiz: QuizQuestion[];
   flashcards: Flashcard[];
   reflectiveQuestions: ReflectiveQuestion[];
+}
+
+// Project and Methodology Types
+export interface Methodology {
+  id: string;
+  name: string;
+  description: string;
+  systemPrompt: string;
+  outputSchema: string;
+  postProcessing: {
+    normalizeSpaces: boolean;
+    mergeHyphenation: boolean;
+  };
+  isDefault?: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface Project {
+  id: string;
+  title: string;
+  description?: string;
+  methodologyId: string;
+  pages: Page[];
+  mergedText: string;
+  aiResults: AiResults | null;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export type ProjectMin = Pick<Project, 'id' | 'title' | 'description' | 'methodologyId' | 'pages' | 'mergedText' | 'aiResults'>;
+
+// AI Model Types
+export interface AiModel {
+  id: string;
+  name: string;
+  provider: 'openai' | 'anthropic' | 'google' | 'meta';
+  description: string;
+  isAvailable: boolean;
+  maxTokens?: number;
+  costPerToken?: number;
+}
+
+export interface SessionState {
+  projects: Project[];
+  methodologies: Methodology[];
+  selectedAiModel: string; // ID of selected AI model
+  ui: {
+    home?: {
+      newProject: { title: string; description?: string; methodologyId?: string };
+      methodologyEditor?: { 
+        mode: 'create' | 'edit' | 'duplicate'; 
+        draft: Methodology; 
+        isOpen: boolean 
+      };
+    };
+  };
 }

@@ -567,77 +567,18 @@ export const QuizStep: React.FC<QuizStepProps> = ({
 
           {/* Flashcards Tab */}
           <TabsContent value="flashcards" className="space-y-4">
-            {hasFlashcards ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Flashcard {currentFlashcardIndex + 1} di {aiResults?.interactiveLearning?.flashcards.length}</span>
-                    <Badge variant="outline" className="flex items-center gap-1">
-                      {getCategoryIcon(currentFlashcard?.category || 'concept')}
-                      {currentFlashcard?.category || 'concept'}
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div 
-                    className="min-h-[200px] bg-card border-2 border-dashed border-border rounded-lg p-6 flex items-center justify-center cursor-pointer transition-all hover:border-primary"
-                    onClick={() => setShowFlashcardBack(!showFlashcardBack)}
-                  >
-                    <div className="text-center">
-                      <h3 className="text-lg font-semibold mb-2">
-                        {showFlashcardBack ? 'Risposta' : 'Domanda'}
-                      </h3>
-                      <p className="text-foreground">
-                        {showFlashcardBack ? currentFlashcard?.back : currentFlashcard?.front}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <Button
-                      onClick={handlePrevFlashcard}
-                      variant="outline"
-                      size="sm"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Precedente
-                    </Button>
-
-                    <Button
-                      onClick={() => setShowFlashcardBack(!showFlashcardBack)}
-                      variant="outline"
-                      size="sm"
-                    >
-                      {showFlashcardBack ? (
-                        <>
-                          <RotateCcw className="w-4 h-4 mr-2" />
-                          Nascondi
-                        </>
-                      ) : (
-                        <>
-                          <HelpCircle className="w-4 h-4 mr-2" />
-                          Mostra
-                        </>
-                      )}
-                    </Button>
-
-                    <Button
-                      onClick={handleNextFlashcard}
-                      size="sm"
-                    >
-                      <SkipForward className="w-4 h-4 mr-2" />
-                      Successiva
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="border-dashed border-2">
-                <CardContent className="p-8 text-center">
-                  <p className="text-muted-foreground">Nessuna flashcard disponibile</p>
-                </CardContent>
-              </Card>
-            )}
+            <Card className="border-dashed border-2">
+              <CardContent className="p-8 text-center">
+                <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">Flashcard in Sviluppo</h3>
+                <p className="text-muted-foreground mb-4">
+                  Questa funzionalità è attualmente in fase di sviluppo
+                </p>
+                <Badge variant="secondary">
+                  Coming Soon
+                </Badge>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Reflection Tab */}

@@ -135,118 +135,106 @@ export const TextFormattingToolbar: React.FC<TextFormattingToolbarProps> = ({
   ];
 
   return (
-    <div className="bg-card/50 backdrop-blur-sm border rounded-lg p-3 space-y-3">
-      {/* Header con statistiche */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Type className="w-4 h-4 text-primary" />
-          <span className="text-sm font-medium">Formattazione Testo</span>
-          {isProcessing && (
-            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary" />
+    <div className="p-2 bg-muted/30 rounded-md border">
+      {/* Mobile: Stacked layout */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+        {/* Header con titolo e stats */}
+        <div className="flex items-center justify-between w-full sm:w-auto">
+          <div className="flex items-center gap-2">
+            <Type className="w-3 h-3 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground hidden sm:inline">Formattazione Testo</span>
+            <span className="text-xs text-muted-foreground sm:hidden">Formato</span>
+            {isProcessing && (
+              <div className="animate-spin rounded-full h-2 w-2 border-b border-primary" />
+            )}
+          </div>
+
+          {/* Statistiche - sempre visibili su mobile */}
+          {text.trim() && (
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <span className="hidden sm:inline">{textStats.characters} caratteri</span>
+              <span className="sm:hidden">{textStats.characters}c</span>
+              <span>•</span>
+              <span className="hidden sm:inline">~{textStats.tokens} token</span>
+              <span className="sm:hidden">~{textStats.tokens}t</span>
+            </div>
           )}
         </div>
 
-        {/* Statistiche rapide */}
-        {text.trim() && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Badge variant="outline" className="text-xs">
-              {textStats.words} parole
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              {textStats.characters} caratteri
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              {textStats.sentences} frasi
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              ~{textStats.tokens} token
-            </Badge>
-          </div>
-        )}
-      </div>
-
-      {/* Barra degli strumenti */}
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Pulsante rapido per formattazione base */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handleFormat(formatText, 'formattazione base')}
-          disabled={!text.trim() || isProcessing}
-          className="flex items-center gap-2"
-        >
-          <Zap className="w-3 h-3" />
-          <span className="hidden sm:inline">Formatta</span>
-        </Button>
-
-        {/* Pulsante copia */}
-        {onCopy && (
+        {/* Controlli */}
+        <div className="flex items-center gap-1 w-full sm:w-auto">
+          {/* Pulsante rapido per formattazione base */}
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
-            onClick={handleCopy}
-            disabled={!text.trim()}
-            className="flex items-center gap-2"
+            onClick={() => handleFormat(formatText, 'formattazione base')}
+            disabled={!text.trim() || isProcessing}
+            className="h-7 px-2 text-xs flex-1 sm:flex-none"
           >
-            {isCopied ? (
-              <Check className="w-3 h-3 text-green-600" />
-            ) : (
-              <Copy className="w-3 h-3" />
-            )}
-            <span className="hidden sm:inline">
-              {isCopied ? 'Copiato!' : 'Copia'}
-            </span>
+            <Zap className="w-3 h-3 mr-1" />
+            <span className="hidden sm:inline">Formatta</span>
+            <span className="sm:hidden">Auto</span>
           </Button>
-        )}
 
-        <div className="w-px h-4 bg-border" />
-
-        {/* Menu a tendina per opzioni avanzate */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          {/* Pulsante copia */}
+          {onCopy && (
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
-              disabled={!text.trim() || isProcessing}
-              className="flex items-center gap-2"
+              onClick={handleCopy}
+              disabled={!text.trim()}
+              className="h-7 px-2 text-xs flex-shrink-0"
             >
-              <RotateCcw className="w-3 h-3" />
-              <span className="hidden sm:inline">Opzioni</span>
-              <ChevronDown className="w-3 h-3" />
+              {isCopied ? (
+                <Check className="w-3 h-3 mr-1 text-green-600" />
+              ) : (
+                <Copy className="w-3 h-3 mr-1" />
+              )}
+              <span className="hidden sm:inline">{isCopied ? 'Copiato!' : 'Copia'}</span>
+              <span className="sm:hidden">{isCopied ? '✓' : ''}</span>
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-64">
-            {formattingOptions.map((section, sectionIndex) => (
-              <div key={sectionIndex}>
-                <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
-                  {section.label}
-                </DropdownMenuLabel>
-                {section.items.map((item, itemIndex) => (
-                  <DropdownMenuItem
-                    key={itemIndex}
-                    onClick={item.action}
-                    disabled={!text.trim() || isProcessing}
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    <item.icon className="w-3 h-3" />
-                    <span className="text-sm">{item.label}</span>
-                  </DropdownMenuItem>
-                ))}
-                {sectionIndex < formattingOptions.length - 1 && (
-                  <DropdownMenuSeparator />
-                )}
-              </div>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+          )}
 
-      {/* Suggerimenti */}
-      {!text.trim() && (
-        <div className="text-xs text-muted-foreground text-center py-2">
-          Carica del testo per utilizzare gli strumenti di formattazione
+          {/* Menu a tendina per opzioni avanzate */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={!text.trim() || isProcessing}
+                className="h-7 px-2 text-xs flex-shrink-0"
+              >
+                <span className="hidden sm:inline">Opzioni</span>
+                <span className="sm:hidden">+</span>
+                <ChevronDown className="w-3 h-3 ml-1" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              {formattingOptions.map((section, sectionIndex) => (
+                <div key={sectionIndex}>
+                  <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
+                    {section.label}
+                  </DropdownMenuLabel>
+                  {section.items.map((item, itemIndex) => (
+                    <DropdownMenuItem
+                      key={itemIndex}
+                      onClick={item.action}
+                      disabled={!text.trim() || isProcessing}
+                      className="flex items-center gap-2 cursor-pointer text-xs"
+                    >
+                      <item.icon className="w-3 h-3" />
+                      <span>{item.label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                  {sectionIndex < formattingOptions.length - 1 && (
+                    <DropdownMenuSeparator />
+                  )}
+                </div>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      )}
+      </div>
     </div>
   );
 };

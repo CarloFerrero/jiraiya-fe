@@ -9,21 +9,23 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        github: "bg-[#912842] text-white hover:bg-[#7a1f37] shadow-sm border border-[#912842] dark:bg-[#d48fa4] dark:text-[#1a1a1a] dark:hover:bg-[#c17a91] dark:border-[#d48fa4]",
+        githubSecondary: "bg-[#f6f8fa] text-[#24292f] hover:bg-[#f3f4f6] border border-[#d0d7de] shadow-sm dark:bg-[#2d2d2d] dark:text-[#e6e6e6] dark:hover:bg-[#3a3a3a] dark:border-[#444444]",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        default: "h-8 px-3 py-1.5 text-sm",
+        sm: "h-7 px-2 py-1 text-xs",
+        lg: "h-9 px-4 py-2 text-sm",
+        icon: "h-8 w-8",
       },
     },
     defaultVariants: {

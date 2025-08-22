@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -6,16 +6,13 @@ import { BookOpen, Eye, Brain, Lightbulb, Sparkles, Target, Heart } from 'lucide
 import type { AiResults } from '@/types';
 
 interface LiteraryAnalysisTabsProps {
-  results: AiResults;
-  activeTab: string;
-  onTabChange: (tab: string) => void;
+  aiResults: AiResults;
 }
 
 export const LiteraryAnalysisTabs: React.FC<LiteraryAnalysisTabsProps> = ({ 
-  results, 
-  activeTab, 
-  onTabChange 
+  aiResults 
 }) => {
+  const [activeTab, setActiveTab] = useState('plot');
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
@@ -26,7 +23,7 @@ export const LiteraryAnalysisTabs: React.FC<LiteraryAnalysisTabsProps> = ({
         </Badge>
       </div>
 
-      <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 sm:grid-cols-2 md:grid-cols-4 bg-muted/50 flex-wrap gap-1">
           <TabsTrigger value="plot" className="flex items-center gap-1 text-xs sm:text-sm">
             <BookOpen className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -61,7 +58,7 @@ export const LiteraryAnalysisTabs: React.FC<LiteraryAnalysisTabsProps> = ({
             <CardContent>
               <div className="prose prose-sm max-w-none">
                 <p className="text-foreground leading-relaxed">
-                  {results.plotSummary}
+                  {aiResults.plotSummary}
                 </p>
               </div>
             </CardContent>
@@ -78,7 +75,7 @@ export const LiteraryAnalysisTabs: React.FC<LiteraryAnalysisTabsProps> = ({
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                {results.symbolicAnalysis.keyElements.map((element, index) => (
+                {aiResults.symbolicAnalysis.keyElements.map((element, index) => (
                   <div key={index} className="border-l-4 border-primary/20 pl-4 space-y-3">
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
@@ -123,7 +120,7 @@ export const LiteraryAnalysisTabs: React.FC<LiteraryAnalysisTabsProps> = ({
                     Temi Filosofici
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {results.deepMeaning.philosophicalThemes.map((theme, index) => (
+                    {aiResults.deepMeaning.philosophicalThemes.map((theme, index) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {theme}
                       </Badge>
@@ -136,7 +133,7 @@ export const LiteraryAnalysisTabs: React.FC<LiteraryAnalysisTabsProps> = ({
                   <h4 className="font-semibold text-foreground">Interpretazione Esistenziale</h4>
                   <div className="bg-muted/30 rounded-lg p-4">
                     <p className="text-sm text-foreground leading-relaxed">
-                      {results.deepMeaning.existentialInterpretation}
+                      {aiResults.deepMeaning.existentialInterpretation}
                     </p>
                   </div>
                 </div>
@@ -146,7 +143,7 @@ export const LiteraryAnalysisTabs: React.FC<LiteraryAnalysisTabsProps> = ({
                   <h4 className="font-semibold text-foreground">Verdà Universali</h4>
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
                     <p className="text-sm text-foreground leading-relaxed">
-                      {results.deepMeaning.universalTruths}
+                      {aiResults.deepMeaning.universalTruths}
                     </p>
                   </div>
                 </div>
@@ -173,7 +170,7 @@ export const LiteraryAnalysisTabs: React.FC<LiteraryAnalysisTabsProps> = ({
                   </h4>
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
                     <p className="text-sm text-foreground leading-relaxed">
-                      {results.personalLesson.mainInsight}
+                      {aiResults.personalLesson.mainInsight}
                     </p>
                   </div>
                 </div>
@@ -182,7 +179,7 @@ export const LiteraryAnalysisTabs: React.FC<LiteraryAnalysisTabsProps> = ({
                 <div className="space-y-3">
                   <h4 className="font-semibold text-foreground">Applicazioni Pratiche</h4>
                   <div className="space-y-2">
-                    {results.personalLesson.practicalApplications.map((application, index) => (
+                    {aiResults.personalLesson.practicalApplications.map((application, index) => (
                       <div key={index} className="flex items-start gap-3 bg-muted/30 rounded-lg p-3">
                         <div className="w-5 h-5 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                           <span className="text-xs font-bold text-primary">{index + 1}</span>
@@ -198,7 +195,7 @@ export const LiteraryAnalysisTabs: React.FC<LiteraryAnalysisTabsProps> = ({
                   <h4 className="font-semibold text-foreground">Domanda per la Riflessione</h4>
                   <div className="bg-muted/30 rounded-lg p-4 border-l-4 border-primary">
                     <p className="text-sm text-foreground leading-relaxed italic">
-                      "{results.personalLesson.reflectiveQuestion}"
+                      "{aiResults.personalLesson.reflectiveQuestion}"
                     </p>
                   </div>
                 </div>
