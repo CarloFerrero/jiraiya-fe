@@ -43,9 +43,9 @@ export const MobileWorkspace: React.FC<MobileWorkspaceProps> = ({
 
   return (
     <div className={cn("flex flex-col h-[100dvh] max-h-[100dvh]", className)}>
-      {/* Tab Navigation - Fixed at bottom for better mobile UX */}
-      <div className="order-2 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mobile-tab-nav">
-        <div className="flex items-center justify-around px-1 py-1 pb-safe-or-4 safe-area-inset-bottom">
+      {/* Tab Navigation - Compact under header */}
+      <div className="order-1 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex items-center justify-around px-1 py-1">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -57,7 +57,7 @@ export const MobileWorkspace: React.FC<MobileWorkspaceProps> = ({
                 size="sm"
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "flex flex-col items-center gap-1 h-auto py-3 px-2 min-w-0 flex-1",
+                  "flex items-center gap-2 h-8 px-3 min-w-0 flex-1",
                   "text-xs font-medium transition-all duration-200",
                   "touch-manipulation select-none",
                   "active:scale-95 active:bg-primary/20",
@@ -67,11 +67,11 @@ export const MobileWorkspace: React.FC<MobileWorkspaceProps> = ({
                 )}
               >
                 <Icon className={cn(
-                  "w-5 h-5 transition-all duration-200",
+                  "w-4 h-4 transition-all duration-200",
                   isActive && "scale-110 text-primary"
                 )} />
                 <span className={cn(
-                  "truncate w-full text-center transition-all duration-200",
+                  "truncate transition-all duration-200",
                   isActive && "font-semibold"
                 )}>
                   {tab.label}
@@ -83,7 +83,7 @@ export const MobileWorkspace: React.FC<MobileWorkspaceProps> = ({
       </div>
 
       {/* Tab Content - Takes remaining space */}
-      <div className="order-1 flex-1 overflow-hidden mobile-workspace-content">
+      <div className="order-2 flex-1 overflow-hidden">
         {tabs.map((tab) => (
           <div
             key={tab.id}
