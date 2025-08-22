@@ -18,7 +18,7 @@ export const MobileWorkspace: React.FC<MobileWorkspaceProps> = ({
   study,
   className
 }) => {
-  const [activeTab, setActiveTab] = useState<WorkspaceTab>('analysis');
+  const [activeTab, setActiveTab] = useState<WorkspaceTab>('sources');
 
   const tabs = [
     {
@@ -42,10 +42,10 @@ export const MobileWorkspace: React.FC<MobileWorkspaceProps> = ({
   ];
 
   return (
-    <div className={cn("flex flex-col h-[calc(100vh-3.5rem)]", className)}>
+    <div className={cn("flex flex-col h-[100dvh] max-h-[100dvh]", className)}>
       {/* Tab Navigation - Fixed at bottom for better mobile UX */}
       <div className="order-2 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mobile-tab-nav">
-        <div className="flex items-center justify-around px-1 py-1 safe-area-inset-bottom">
+        <div className="flex items-center justify-around px-1 py-1 pb-safe-or-4 safe-area-inset-bottom">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;

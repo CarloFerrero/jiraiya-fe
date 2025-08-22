@@ -428,4 +428,42 @@ All colors MUST be HSL for consistency.
     background-color: hsl(var(--accent)) !important;
     color: hsl(var(--accent-foreground)) !important;
   }
+
+  /* Mobile Safe Area - Support per Safari e altri browser mobili */
+  @supports (padding: max(0px)) {
+    .safe-area-inset-bottom {
+      padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+    }
+    
+    .pb-safe-or-4 {
+      padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+    }
+    
+    .mobile-tab-nav {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+
+  /* Fallback per browser che non supportano safe-area-inset */
+  @supports not (padding: max(0px)) {
+    .safe-area-inset-bottom {
+      padding-bottom: 1rem;
+    }
+    
+    .pb-safe-or-4 {
+      padding-bottom: 1rem;
+    }
+  }
+
+  /* Viewport height dinamica per mobile */
+  .h-screen-mobile {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height - supporto moderno */
+  }
+
+  /* Layout specifico per mobile workspace */
+  .mobile-workspace-content {
+    height: calc(100dvh - 4rem - env(safe-area-inset-bottom, 0px));
+    max-height: calc(100dvh - 4rem - env(safe-area-inset-bottom, 0px));
+  }
 }
