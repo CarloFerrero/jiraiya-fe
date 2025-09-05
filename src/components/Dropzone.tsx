@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { FileImage, AlertCircle, BookOpen } from 'lucide-react';
+import { FileImage, AlertCircle, BookOpen, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface DropzoneProps {
   onFilesSelected: (files: File[]) => void;
@@ -66,6 +67,15 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onFilesSelected, isProcessin
 
   return (
     <div className="space-y-3">
+      {/* OCR Warning */}
+      <Alert className="bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
+        <Info className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+        <AlertDescription className="text-sm text-amber-800 dark:text-amber-300">
+          <strong>Nota OCR:</strong> La trascrizione automatica del testo dalle immagini può contenere errori. 
+          Ti consigliamo di ricontrollare il testo trascritto prima dell'analisi per garantire risultati accurati.
+        </AlertDescription>
+      </Alert>
+
       <div
         className={cn(
           "border border-dashed rounded-lg p-6 text-center transition-all duration-200 cursor-pointer",

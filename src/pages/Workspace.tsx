@@ -20,10 +20,10 @@ const Workspace: React.FC = () => {
   const navigate = useNavigate();
   const { state: sessionState, updateState } = useSessionState();
   const layout = useWorkspaceLayout();
-  
+
   // Find the current project - also check sessionStorage directly
   const currentProject = projectId ? sessionState.projects.find(p => p.id === projectId) : null;
-  
+
   // Also check sessionStorage directly as a fallback
   const sessionStorageProject = projectId ? (() => {
     try {
@@ -37,20 +37,20 @@ const Workspace: React.FC = () => {
     }
     return null;
   })() : null;
-  
+
   // Use sessionStorage project if sessionState project is not available
   const effectiveProject = currentProject || sessionStorageProject;
-  
+
   // Add a flag to prevent multiple redirects
   const [hasRedirected, setHasRedirected] = useState(false);
-  
+
   // If no project ID or project not found, redirect to home
   useEffect(() => {
     // Only proceed if we have a projectId and no effectiveProject
     if (!projectId || effectiveProject || hasRedirected) {
       return;
     }
-    
+
     // Try to reload state from sessionStorage first
     const savedState = sessionStorage.getItem('jiraiya:state');
     if (savedState) {
@@ -69,20 +69,20 @@ const Workspace: React.FC = () => {
         console.error('Error parsing sessionStorage:', e);
       }
     }
-    
+
     // If still not found, redirect after delay
     const timeoutId = setTimeout(() => {
       // Check again after the state update
       const updatedSessionState = JSON.parse(sessionStorage.getItem('jiraiya:state') || '{}');
       const projectStillNotFound = !updatedSessionState.projects?.find((p: any) => p.id === projectId);
-      
+
       if (projectStillNotFound && !hasRedirected) {
         setHasRedirected(true);
         toast.error('Progetto non trovato');
         navigate('/');
       }
     }, 2000); // Increased delay to 2 seconds
-    
+
     return () => clearTimeout(timeoutId);
   }, [projectId, effectiveProject, navigate, updateState, hasRedirected]);
 
@@ -135,7 +135,7 @@ const Workspace: React.FC = () => {
         }
       };
     }
-    
+
     return {
       pages: [],
       mergedText: '',
@@ -150,7 +150,8 @@ const Workspace: React.FC = () => {
       },
       analysis: {
         lastAiResultRaw: '',
-        lastAiResultParsed: null
+        lastAiResultParsed: null,
+        history: []
       },
       quiz: {
         items: []
@@ -185,12 +186,12 @@ const Workspace: React.FC = () => {
           projects: prev.projects.map(p =>
             p.id === effectiveProject.id
               ? {
-                  ...p,
-                  pages: state.pages,
-                  mergedText: state.mergedText,
-                  aiResults: state.aiResults,
-                  updatedAt: Date.now()
-                }
+                ...p,
+                pages: state.pages,
+                mergedText: state.mergedText,
+                aiResults: state.aiResults,
+                updatedAt: Date.now()
+              }
               : p
           )
         }));
@@ -365,8 +366,8 @@ const Workspace: React.FC = () => {
       return;
     }
 
-    // Use the provided methodology or the default one
-    const methodologyIdToUse = methodologyId || sessionState.methodologies.find(m => m.isDefault)?.id || sessionState.methodologies[0]?.id;
+    // Use the provided methodology or the currently selected one from UI
+    const methodologyIdToUse = methodologyId || selectedMethodologyId || sessionState.methodologies.find(m => m.isDefault)?.id || sessionState.methodologies[0]?.id;
     const selectedMethodology = sessionState.methodologies.find(m => m.id === methodologyIdToUse);
 
     if (!selectedMethodology) {
@@ -376,98 +377,32 @@ const Workspace: React.FC = () => {
       return;
     }
 
+    console.log('🎯 Metodologia selezionata per analisi:', selectedMethodology.name, '(ID:', selectedMethodology.id, ')');
+    
     setState(prev => ({ ...prev, ui: { ...prev.ui, isCallingAI: true } }));
 
     try {
-      let markdownAnalysis: string;
-      
-      try {
-        // Prova prima con la metodologia e API reale
-        markdownAnalysis = await callAIWithMethodology(
-          state.mergedText, 
-          selectedMethodology
-        );
-        
-        toast.success('Analisi completata con successo!', {
-          icon: <CheckCircle className="w-4 h-4" />
-        });
-        
-      } catch (apiError) {
-        // Fallback ai dati demo se l'API fallisce
-        console.warn('API fallita, usando dati demo:', apiError);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Demo markdown analysis con metodologia
-        markdownAnalysis = `# Analisi con ${selectedMethodology.name}
+      // Chiamata API reale con metodologia
+      const markdownAnalysis = await callAIWithMethodology(
+        state.mergedText,
+        selectedMethodology
+      );
 
-## Metodologia Utilizzata
-**${selectedMethodology.name}**: ${selectedMethodology.description}
+      toast.success(`Analisi completata con metodologia: ${selectedMethodology.name}`, {
+        icon: <CheckCircle className="w-4 h-4" />
+      });
 
-## Analisi Letteraria
-
-## Sintesi Narrativa
-Il testo presenta una narrazione complessa che esplora temi universali attraverso una struttura simbolica ricca di significati nascosti. La storia si sviluppa attraverso una progressione di eventi che riflettono profondi archetipi umani.
-
-## Analisi Simbolica
-
-### Elementi Chiave
-
-#### Il Castello
-- **Descrizione**: Un edificio imponente che domina il paesaggio, con torri che si innalzano verso il cielo
-- **Significato Simbolico**: Rappresenta la mente umana e la ricerca di conoscenza superiore
-- **Riferimenti Culturali**: Simbolo archetipico presente in molte culture, dal Graal ai castelli delle fiabe
-
-#### I Destini Incrociati
-- **Descrizione**: Percorsi che si intersecano e si influenzano reciprocamente
-- **Significato Simbolico**: La complessità delle scelte umane e l'interconnessione delle vite
-- **Riferimenti Culturali**: Concetto presente nella filosofia orientale e nella letteratura moderna
-
-#### La Soglia
-- **Descrizione**: Un passaggio che separa due mondi o stati di coscienza
-- **Significato Simbolico**: Il momento di trasformazione e crescita personale
-- **Riferimenti Culturali**: Simbolo universale presente in miti e rituali di iniziazione
-
-## 🧠 Significato Profondo
-
-### Temi Filosofici
-- La ricerca di identità e significato
-- L'interconnessione tra destino e libero arbitrio
-- La trasformazione attraverso l'esperienza
-- La dualità tra ordine e caos
-
-### Interpretazione Esistenziale
-Il testo esplora la condizione umana attraverso la metafora del viaggio interiore, suggerendo che ogni individuo deve attraversare il proprio "castello" per raggiungere una comprensione più profonda di sé e del mondo.
-
-### Verità Universali
-La crescita personale richiede coraggio, la conoscenza si acquisisce attraverso l'esperienza diretta, e ogni scelta ha conseguenze che si estendono oltre l'individuo.
-
-## Lezione Personale
-
-### Insight Principale
-Ogni ostacolo nella vita è un'opportunità di crescita, e il vero viaggio è quello interiore che ci porta a scoprire chi siamo realmente.
-
-### Applicazioni Pratiche
-1. Affronta le sfide come opportunità di apprendimento
-2. Rifletti sulle tue scelte e le loro conseguenze
-3. Cerca la saggezza nelle esperienze quotidiane
-
-### Domanda Riflessiva
-> Quale "castello" stai attualmente attraversando nella tua vita, e cosa ti sta insegnando questo viaggio?
-`;
-      
-        toast.success(`Demo: Analisi completata con metodologia ${selectedMethodology.name}!`, {
-          icon: <CheckCircle className="w-4 h-4" />
-        });
-      }
-      
       const results: AiResults = {
         transcription: state.mergedText,
         markdownAnalysis: markdownAnalysis
       };
-      
+
       setState(prev => ({
         ...prev,
-        aiResults: results,
+        aiResults: {
+          ...results,
+          usedMethodologyId: selectedMethodology.id // Salva quale metodologia è stata utilizzata
+        },
         analysis: {
           ...prev.analysis,
           lastAiResultRaw: markdownAnalysis,
@@ -478,9 +413,9 @@ Ogni ostacolo nella vita è un'opportunità di crescita, e il vero viaggio è qu
 
     } catch (error) {
       console.error('Errore durante l\'analisi AI:', error);
-      
+
       setState(prev => ({ ...prev, ui: { ...prev.ui, isCallingAI: false } }));
-      
+
       const errorMessage = error instanceof Error ? error.message : 'Errore sconosciuto';
       toast.error(`Errore durante l'analisi: ${errorMessage}`, {
         icon: <AlertTriangle className="w-4 h-4" />
@@ -497,10 +432,11 @@ Ogni ostacolo nella vita è un'opportunità di crescita, e il vero viaggio è qu
       return;
     }
 
-    // Get the methodology used for the analysis
-    const selectedMethodology = sessionState.methodologies.find(m => m.id === selectedMethodologyId) || 
-                               sessionState.methodologies.find(m => m.isDefault) || 
-                               sessionState.methodologies[0];
+    // Get the methodology that was actually used for the analysis
+    const usedMethodologyId = state.aiResults.usedMethodologyId || selectedMethodologyId;
+    const selectedMethodology = sessionState.methodologies.find(m => m.id === usedMethodologyId) ||
+      sessionState.methodologies.find(m => m.isDefault) ||
+      sessionState.methodologies[0];
 
     if (!selectedMethodology) {
       toast.error('Metodologia non trovata', {
@@ -512,32 +448,20 @@ Ogni ostacolo nella vita è un'opportunità di crescita, e il vero viaggio è qu
     setState(prev => ({ ...prev, ui: { ...prev.ui, isGeneratingQuiz: true } }));
 
     try {
-      let quizResults;
+      // Chiamata API reale per generazione quiz
+      const quizResults = await generateQuizWithMethodology(
+        state.aiResults,
+        selectedMethodology
+      );
+
+      const quizCount = quizResults.quiz?.length || 0;
+      const flashcardCount = quizResults.flashcards?.length || 0;
+      const reflectiveCount = quizResults.reflectiveQuestions?.length || 0;
       
-      try {
-        // Prova prima con la metodologia e API reale
-        quizResults = await generateQuizWithMethodology(
-          state.aiResults,
-          selectedMethodology
-        );
-        
-        toast.success('Quiz generati con successo!', {
-          icon: <Brain className="w-4 h-4" />
-        });
-        
-      } catch (apiError) {
-        // Fallback ai dati demo se l'API fallisce
-        console.warn('API fallita per quiz, usando dati demo:', apiError);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        const demoData = getDemoData();
-        quizResults = demoData.interactiveLearning;
-        
-        toast.success(`Demo: Quiz generati con metodologia ${selectedMethodology.name}!`, {
-          icon: <Brain className="w-4 h-4" />
-        });
-      }
-      
+      toast.success(`Quiz generati: ${quizCount} domande, ${flashcardCount} flashcard, ${reflectiveCount} riflessioni`, {
+        icon: <Brain className="w-4 h-4" />
+      });
+
       setState(prev => ({
         ...prev,
         aiResults: {
@@ -553,9 +477,9 @@ Ogni ostacolo nella vita è un'opportunità di crescita, e il vero viaggio è qu
 
     } catch (error) {
       console.error('Errore durante la generazione quiz:', error);
-      
+
       setState(prev => ({ ...prev, ui: { ...prev.ui, isGeneratingQuiz: false } }));
-      
+
       const errorMessage = error instanceof Error ? error.message : 'Errore sconosciuto';
       toast.error(`Errore durante la generazione quiz: ${errorMessage}`, {
         icon: <AlertTriangle className="w-4 h-4" />
@@ -573,7 +497,6 @@ Ogni ostacolo nella vita è un'opportunità di crescita, e il vero viaggio è qu
       }
     }));
   };
-
 
 
   // Check if merge is possible
@@ -621,26 +544,26 @@ Ogni ostacolo nella vita è un'opportunità di crescita, e il vero viaggio è qu
         e.preventDefault();
         handleToggleLeftPane();
       }
-      
+
       // Toggle right pane: ]
       if (e.key === ']') {
         e.preventDefault();
         handleToggleRightPane();
       }
-      
+
       // Focus center: \
       if (e.key === '\\') {
         e.preventDefault();
         // Focus center pane logic
       }
-      
+
       // Upload: Cmd/Ctrl+U
       if ((e.metaKey || e.ctrlKey) && e.key === 'u') {
         e.preventDefault();
         // Trigger file upload
         document.getElementById('file-upload')?.click();
       }
-      
+
       // Merge text: Cmd/Ctrl+J
       if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
         e.preventDefault();
@@ -648,7 +571,7 @@ Ogni ostacolo nella vita è un'opportunità di crescita, e il vero viaggio è qu
           handleMergeText();
         }
       }
-      
+
       // Execute analysis: Cmd/Ctrl+Enter
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
         e.preventDefault();

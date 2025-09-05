@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Settings, Sun, Moon, Monitor, PanelLeft, PanelRight } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Settings, Sun, Moon, Monitor, PanelLeft, PanelRight, Info } from 'lucide-react';
 import { useTheme } from '@/hooks/use-theme';
 import { AiModelSelector } from '@/components/AiModelSelector';
 import { ApiKeySettings } from '@/components/ApiKeySettings';
@@ -36,6 +37,20 @@ export const AppShell: React.FC<AppShellProps> = ({
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Beta Info Banner */}
+      <div className="bg-blue-50 dark:bg-blue-950/20 border-b border-blue-200 dark:border-blue-800">
+        <div className="container px-4 py-2">
+          <Alert className="border-0 bg-transparent p-0">
+            <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <AlertDescription className="text-sm text-blue-800 dark:text-blue-300 ml-6">
+              <strong>Versione Beta per Test:</strong> Questa è una versione di prova per insegnanti. 
+              I risultati dell'AI possono contenere errori, l'OCR può sbagliare nella trascrizione, 
+              e i dati non vengono salvati permanentemente (servirà un database nella versione finale).
+            </AlertDescription>
+          </Alert>
+        </div>
+      </div>
+
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className=" flex h-14 items-center justify-between px-4">
@@ -119,6 +134,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           </div>
         </div>
       </header>
+
 
       {/* Main Content */}
       <main className="flex-1">

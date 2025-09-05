@@ -19,13 +19,22 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/landing" element={<Landing />} />
-          <Route path="/app" element={<Index />} />
-          <Route path="/workspace" element={<Workspace />} />
-          <Route path="/workspace/:id" element={<Workspace />} />
-          <Route path="/methodologies" element={<Home />} />
+          {/* Landing page is now the root */}
+          <Route path="/" element={<Landing />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
+          
+          {/* App routes under /app */}
+          <Route path="/app" element={<Home />} />
+          <Route path="/app/workspace" element={<Workspace />} />
+          <Route path="/app/workspace/:id" element={<Workspace />} />
+          <Route path="/app/methodologies" element={<Home />} />
+          
+          {/* Legacy redirects for backward compatibility */}
+          <Route path="/landing" element={<Landing />} />
+          <Route path="/workspace" element={<Index />} />
+          <Route path="/workspace/:id" element={<Index />} />
+          <Route path="/methodologies" element={<Index />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

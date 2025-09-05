@@ -9,80 +9,47 @@ const DEFAULT_METHODOLOGY: Methodology = {
   id: 'default-literary-criticism',
   name: 'Critico letterario (5 sezioni)',
   description: 'Analisi letteraria standard con 5 sezioni: Trascrizione, Trama, Analisi simbolica, Significato, Lezione',
-  systemPrompt: `Analizza il seguente testo letterario con un approccio critico approfondito. Fornisci un'analisi strutturata in 5 sezioni:
+  systemPrompt: `Sei un critico letterario esperto specializzato nell'analisi profonda di testi narrativi. 
+
+Analizza il seguente testo con particolare attenzione a simboli, temi e significati profondi:
 
 {{TRANSCRIPTION}}
 
-Analizza il testo fornito e restituisci un JSON con la seguente struttura:
-{
-  "transcription": "Trascrizione pulita del testo originale",
-  "plotSummary": "Sintesi della trama o contenuto principale",
-  "symbolicAnalysis": {
-    "keyElements": [
-      {
-        "element": "Nome dell'elemento simbolico",
-        "description": "Come appare nel testo",
-        "symbolicMeaning": "Significato simbolico",
-        "culturalReferences": "Riferimenti culturali e letterari"
-      }
-    ]
-  },
-  "deepMeaning": {
-    "philosophicalThemes": ["Tema 1", "Tema 2"],
-    "existentialInterpretation": "Interpretazione esistenziale del testo",
-    "universalTruths": "Verdi universali espresse"
-  },
-  "personalLesson": {
-    "mainInsight": "Insight principale",
-    "practicalApplications": ["Applicazione 1", "Applicazione 2"],
-    "reflectiveQuestion": "Domanda per la riflessione personale"
-  }
-}`,
-  outputSchema: `{
-  "type": "object",
-  "properties": {
-    "transcription": { "type": "string" },
-    "plotSummary": { "type": "string" },
-    "symbolicAnalysis": {
-      "type": "object",
-      "properties": {
-        "keyElements": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "element": { "type": "string" },
-              "description": { "type": "string" },
-              "symbolicMeaning": { "type": "string" },
-              "culturalReferences": { "type": "string" }
-            },
-            "required": ["element", "description", "symbolicMeaning", "culturalReferences"]
-          }
-        }
-      },
-      "required": ["keyElements"]
-    },
-    "deepMeaning": {
-      "type": "object",
-      "properties": {
-        "philosophicalThemes": { "type": "array", "items": { "type": "string" } },
-        "existentialInterpretation": { "type": "string" },
-        "universalTruths": { "type": "string" }
-      },
-      "required": ["philosophicalThemes", "existentialInterpretation", "universalTruths"]
-    },
-    "personalLesson": {
-      "type": "object",
-      "properties": {
-        "mainInsight": { "type": "string" },
-        "practicalApplications": { "type": "array", "items": { "type": "string" } },
-        "reflectiveQuestion": { "type": "string" }
-      },
-      "required": ["mainInsight", "practicalApplications", "reflectiveQuestion"]
-    }
-  },
-  "required": ["transcription", "plotSummary", "symbolicAnalysis", "deepMeaning", "personalLesson"]
-}`,
+Fornisci un'analisi completa e approfondita che esplori tutti gli aspetti significativi del testo.`,
+  outputFormat: `Struttura l'analisi in formato markdown con le seguenti sezioni:
+
+# 📖 Analisi Letteraria
+
+## 📝 Sintesi Narrativa
+Una sintesi coinvolgente della trama in 3-4 frasi
+
+## 🔍 Analisi Simbolica
+### Elementi Chiave
+Per ogni elemento simbolico importante:
+- **Nome elemento**
+- **Descrizione**: Come appare nel testo
+- **Significato simbolico**: Interpretazione approfondita
+- **Riferimenti culturali**: Collegamenti a miti, culture, letteratura
+
+## 🧠 Significato Profondo
+### Temi Filosofici
+Elenco puntato dei temi principali
+
+### Interpretazione Esistenziale
+Analisi del significato umano universale (2-3 frasi)
+
+### Verità Universali
+Principi fondamentali espressi dal testo
+
+## 💡 Lezione Personale
+### Insight Principale
+La lezione di vita principale
+
+### Applicazioni Pratiche
+3 esempi concreti di come applicare gli insegnamenti
+
+### Domanda Riflessiva
+Una domanda che stimoli l'introspezione personale`,
   postProcessing: {
     normalizeSpaces: true,
     mergeHyphenation: true
@@ -97,31 +64,34 @@ const ALTERNATIVE_METHODOLOGY: Methodology = {
   id: 'philosophical-analysis',
   name: 'Analisi filosofica',
   description: 'Approccio filosofico ed esistenziale per testi complessi',
-  systemPrompt: `Analizza il seguente testo con un approccio filosofico ed esistenziale. Concentrati sui temi universali e le domande fondamentali:
+  systemPrompt: `Sei un filosofo e pensatore specializzato nell'analisi esistenziale di testi.
+
+Analizza il seguente testo con un approccio filosofico ed esistenziale, concentrandoti sui temi universali e le domande fondamentali:
 
 {{TRANSCRIPTION}}
 
-Analizza il testo fornito e restituisci un JSON con la seguente struttura:
-{
-  "transcription": "Trascrizione pulita del testo originale",
-  "philosophicalThemes": ["Tema filosofico 1", "Tema filosofico 2"],
-  "existentialQuestions": ["Domanda esistenziale 1", "Domanda esistenziale 2"],
-  "humanCondition": "Analisi della condizione umana nel testo",
-  "wisdom": "Saggezza e insegnamenti universali",
-  "personalReflection": "Spunti per riflessione personale"
-}`,
-  outputSchema: `{
-  "type": "object",
-  "properties": {
-    "transcription": { "type": "string" },
-    "philosophicalThemes": { "type": "array", "items": { "type": "string" } },
-    "existentialQuestions": { "type": "array", "items": { "type": "string" } },
-    "humanCondition": { "type": "string" },
-    "wisdom": { "type": "string" },
-    "personalReflection": { "type": "string" }
-  },
-  "required": ["transcription", "philosophicalThemes", "existentialQuestions", "humanCondition", "wisdom", "personalReflection"]
-}`,
+Esplora le profondità filosofiche del testo e le sue implicazioni per la condizione umana.`,
+  outputFormat: `Struttura l'analisi in formato markdown filosofico:
+
+# 🤔 Analisi Filosofica
+
+## 🌌 Temi Filosofici Centrali
+Elenco dei principali temi filosofici emersi dal testo
+
+## ❓ Domande Esistenziali
+Le grandi domande sollevate dal testo sulla vita, morte, significato, libertà
+
+## 👤 Condizione Umana
+Come il testo riflette e illumina la condizione umana universale
+
+## 💎 Saggezza Universale
+Gli insegnamenti e la saggezza che emergono dal testo
+
+## 🪞 Riflessione Personale
+Spunti per la riflessione personale e l'auto-esame
+
+## 🔗 Connessioni Filosofiche
+Collegamenti con filosofi, correnti di pensiero o opere filosofiche classiche`,
   postProcessing: {
     normalizeSpaces: true,
     mergeHyphenation: true

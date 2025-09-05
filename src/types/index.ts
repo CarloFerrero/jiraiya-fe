@@ -16,12 +16,13 @@ export interface SymbolicElement {
 }
 
 export interface AiResults {
-  plotSummary: any;
-  symbolicAnalysis: any;
-  deepMeaning: any;
-  personalLesson: any;
+  plotSummary?: any;
+  symbolicAnalysis?: any;
+  deepMeaning?: any;
+  personalLesson?: any;
   transcription: string;
   markdownAnalysis: string; // Analisi in formato markdown
+  usedMethodologyId?: string; // ID della metodologia utilizzata per l'analisi
   interactiveLearning?: InteractiveLearning;
 }
 
@@ -91,7 +92,7 @@ export interface Methodology {
   name: string;
   description: string;
   systemPrompt: string;
-  outputSchema: string;
+  outputFormat: string; // Sostituisce outputSchema - descrizione in linguaggio naturale dell'output
   postProcessing: {
     normalizeSpaces: boolean;
     mergeHyphenation: boolean;

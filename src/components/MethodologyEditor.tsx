@@ -17,7 +17,6 @@ import {
   Settings,
   Trash2
 } from 'lucide-react';
-import { validateJsonSchema, formatJson } from '@/utils/json-validation';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 import type { Methodology } from '@/types';
 
@@ -45,7 +44,7 @@ export const MethodologyEditor: React.FC<MethodologyEditorProps> = ({
     name: '',
     description: '',
     systemPrompt: '',
-    outputSchema: '',
+    outputFormat: '',
     postProcessing: {
       normalizeSpaces: true,
       mergeHyphenation: true
@@ -57,7 +56,7 @@ export const MethodologyEditor: React.FC<MethodologyEditorProps> = ({
   const [errors, setErrors] = useState<{
     name?: string;
     systemPrompt?: string;
-    outputSchema?: string;
+    outputFormat?: string;
   }>({});
 
   const [showPreview, setShowPreview] = useState(false);
@@ -88,7 +87,7 @@ export const MethodologyEditor: React.FC<MethodologyEditorProps> = ({
         name: '',
         description: '',
         systemPrompt: '',
-        outputSchema: '',
+        outputFormat: '',
         postProcessing: {
           normalizeSpaces: true,
           mergeHyphenation: true
@@ -124,13 +123,8 @@ export const MethodologyEditor: React.FC<MethodologyEditorProps> = ({
       newErrors.systemPrompt = 'Il prompt deve contenere {{TRANSCRIPTION}}';
     }
 
-    if (!draft.outputSchema.trim()) {
-      newErrors.outputSchema = 'Lo schema JSON è obbligatorio';
-    } else {
-      const schemaValidation = validateJsonSchema(draft.outputSchema);
-      if (!schemaValidation.isValid) {
-        newErrors.outputSchema = schemaValidation.error || 'Schema JSON non valido';
-      }
+    if (!draft.outputFormat.trim()) {
+      newErrors.outputFormat = 'Il formato output è obbligatorio';
     }
 
     setErrors(newErrors);
@@ -339,29 +333,34 @@ export const MethodologyEditor: React.FC<MethodologyEditorProps> = ({
                 </div>
               </div>
 
-              {/* Output Schema */}
+              {/* Output Format */}
               <div className="space-y-2">
-                <Label htmlFor="output-schema">Schema JSON Output *</Label>
+                <Label htmlFor="output-format">Formato Output Desiderato *</Label>
                 <Textarea
-                  id="output-schema"
-                  value={draft.outputSchema}
-                  onChange={(e) => setDraft({ ...draft, outputSchema: e.target.value })}
+                  id="output-format"
+                  value={draft.outputFormat}
+                  onChange={(e) => setDraft({ ...draft, outputFormat: e.target.value })}
                   onKeyDown={handleKeyDown}
-                  placeholder='{"type": "object", "properties": {...}}'
+                  placeholder="Descrivi come vuoi che sia strutturato l'output, ad esempio:
+- Inizia con un titolo principale
+- Suddividi l'analisi in sezioni chiare  
+- Usa elenchi puntati per i concetti chiave
+- Termina con una riflessione personale
+- Scrivi in formato markdown con intestazioni"
                   rows={6}
-                  className={`font-mono text-sm ${errors.outputSchema ? 'border-destructive' : ''}`}
+                  className={errors.outputFormat ? 'border-destructive' : ''}
                 />
                 
-                {errors.outputSchema && (
+                {errors.outputFormat && (
                   <div className="flex items-center gap-1 text-sm text-destructive">
                     <AlertCircle className="w-4 h-4" />
-                    {errors.outputSchema}
+                    {errors.outputFormat}
                   </div>
                 )}
                 
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Code className="w-3 h-3" />
-                  <span>Schema JSON valido per validare l'output AI</span>
+                  <FileText className="w-3 h-3" />
+                  <span>Descrivi in linguaggio naturale come strutturare l'output</span>
                 </div>
               </div>
             </div>

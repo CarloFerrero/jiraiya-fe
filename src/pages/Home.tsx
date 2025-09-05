@@ -117,8 +117,8 @@ const Home: React.FC = () => {
         setIsCreatingProject(false);
         setIsNewProjectModalOpen(false);
         toast.success(`Progetto "${project.title}" creato con successo!`);
-        console.log('Navigating to workspace:', `/workspace/${project.id}`);
-        navigate(`/workspace/${project.id}`);
+        console.log('Navigating to workspace:', `/app/workspace/${project.id}`);
+        navigate(`/app/workspace/${project.id}`);
       }, 100);
 
       return newState;
@@ -126,7 +126,7 @@ const Home: React.FC = () => {
   };
 
   const handleOpenProject = (projectId: string) => {
-    navigate(`/workspace/${projectId}`);
+    navigate(`/app/workspace/${projectId}`);
   };
 
   const handleRenameProject = (projectId: string) => {

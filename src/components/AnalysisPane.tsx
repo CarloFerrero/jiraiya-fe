@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Brain,
   FileText,
@@ -22,7 +23,8 @@ import {
   Hash,
   List,
   CheckSquare,
-  Square
+  Square,
+  Info
 } from 'lucide-react';
 import { TranscriptEditor } from './TranscriptEditor';
 import type { AiResults, Methodology } from '@/types';
@@ -482,6 +484,15 @@ export const AnalysisPane: React.FC<AnalysisPaneProps> = ({
                   if (markdownContent && typeof markdownContent === 'string') {
                     return (
                       <div className="space-y-6">
+                        {/* AI Disclaimer */}
+                        <Alert className="bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800">
+                          <Info className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                          <AlertDescription className="text-sm text-orange-800 dark:text-orange-300">
+                            <strong>Analisi generata dall'AI:</strong> Questi risultati sono prodotti da intelligenza artificiale e potrebbero contenere errori, 
+                            interpretazioni imprecise o "allucinazioni". Ti consigliamo di verificare sempre le informazioni e usare il tuo giudizio critico.
+                          </AlertDescription>
+                        </Alert>
+
                         {/* Header con gradiente */}
                         <div className="relative overflow-hidden rounded-lg">
                           <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-red-500 to-yellow-500 opacity-90"></div>

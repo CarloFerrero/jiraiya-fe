@@ -246,7 +246,7 @@ const Landing: React.FC = () => {
               <Link to="/how-it-works" className="text-sm text-muted-foreground hover:text-primary transition-colors hidden sm:block">
                 Come Funziona
               </Link>
-              <Link to="/">
+              <Link to="/app">
                 <Button size="sm">
                   Prova Ora
                 </Button>
@@ -278,7 +278,7 @@ const Landing: React.FC = () => {
             </div>
 
                          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-               <Link to="/">
+               <Link to="/app">
                  <Button size="lg" className="text-lg px-8 py-6">
                    Inizia Gratis Ora
                    <ArrowRight className="w-5 h-5 ml-2" />
@@ -628,7 +628,7 @@ const Landing: React.FC = () => {
               Questa è la versione beta con tutte le funzionalità core già disponibili.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/">
+              <Link to="/app">
                 <Button size="lg" variant="secondary" className="text-lg px-8 py-6">
                   Prova Ora
                   <ArrowRight className="w-5 h-5 ml-2" />
