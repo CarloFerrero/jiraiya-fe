@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Settings,
   Plus,
@@ -408,6 +409,15 @@ const Home: React.FC = () => {
             </div>
 
             <div className="container mx-auto px-4">
+              {/* Data Persistence Warning */}
+              <Alert className="mb-6 bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800">
+                <Info className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                <AlertDescription className="text-sm text-yellow-800 dark:text-yellow-300">
+                  <strong>Dati Temporanei:</strong> I progetti e le analisi vengono salvati solo nella sessione corrente del browser. 
+                  Nella versione finale sarà integrato un sistema di salvataggio permanente per conservare il tuo lavoro.
+                </AlertDescription>
+              </Alert>
+
               <ProjectList
                 projects={state.projects}
                 methodologies={state.methodologies}

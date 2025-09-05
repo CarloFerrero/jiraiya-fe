@@ -91,11 +91,15 @@ export const SourcesPane: React.FC<SourcesPaneProps> = ({
                   <Button
                     onClick={onMergeText}
                     disabled={!canMerge}
-                    className="w-full h-8 px-2 text-xs bg-transparent hover:bg-transparent text-foreground border-none"
+                    className={`w-full h-8 px-2 text-xs transition-all ${
+                      canMerge 
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm' 
+                        : 'bg-transparent hover:bg-transparent text-muted-foreground border-none'
+                    }`}
                     size="sm"
                   >
-                    <Merge className="w-3 h-3 mr-0" />
-                    Unisci Testo
+                    <Merge className="w-3 h-3 mr-1" />
+                    {canMerge ? 'Procedi →' : 'Unisci Testo'}
                   </Button>
                 </div>
               )}

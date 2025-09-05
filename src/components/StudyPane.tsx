@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Target, 
   Play, 
@@ -18,7 +19,8 @@ import {
   BookOpen,
   FileText,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Info
 } from 'lucide-react';
 import type { AiResults, QuizQuestion, Flashcard } from '@/types';
 
@@ -231,6 +233,15 @@ export const StudyPane: React.FC<StudyPaneProps> = ({
         <TabsContent value="quiz" className="flex-1 flex flex-col mt-2">
           {currentQuestion ? (
             <div className="flex-1 flex flex-col">
+              {/* Quiz AI Disclaimer */}
+              <Alert className="mb-4 bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800">
+                <Info className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                <AlertDescription className="text-sm text-purple-800 dark:text-purple-300">
+                  <strong>Quiz generati dall'AI:</strong> Le domande e le risposte sono create automaticamente dall'intelligenza artificiale. 
+                  Potrebbero contenere errori o imprecisioni. Usali come supporto allo studio, non come fonte definitiva.
+                </AlertDescription>
+              </Alert>
+
               {/* Question Card */}
               <Card className="flex-1 flex flex-col">
                 <CardHeader className="pb-3">

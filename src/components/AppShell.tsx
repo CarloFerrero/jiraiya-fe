@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Settings, Sun, Moon, Monitor, PanelLeft, PanelRight, Info } from 'lucide-react';
+import { Settings, Sun, Moon, Monitor, PanelLeft, PanelRight, Info, X } from 'lucide-react';
 import { useTheme } from '@/hooks/use-theme';
 import { AiModelSelector } from '@/components/AiModelSelector';
 import { ApiKeySettings } from '@/components/ApiKeySettings';
@@ -34,22 +34,44 @@ export const AppShell: React.FC<AppShellProps> = ({
 }) => {
   const { theme } = useTheme();
   const [showApiSettings, setShowApiSettings] = React.useState(false);
+  
+  // Beta banner state - persisted in localStorage
+  const [showBetaBanner, setShowBetaBanner] = React.useState(() => {
+    const stored = localStorage.getItem('hideBetaBanner');
+    return stored !== 'true'; // Show banner unless explicitly hidden
+  });
+
+  const handleCloseBetaBanner = () => {
+    setShowBetaBanner(false);
+    localStorage.setItem('hideBetaBanner', 'true');
+  };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Beta Info Banner */}
-      <div className="bg-blue-50 dark:bg-blue-950/20 border-b border-blue-200 dark:border-blue-800">
-        <div className="container px-4 py-2">
-          <Alert className="border-0 bg-transparent p-0">
-            <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <AlertDescription className="text-sm text-blue-800 dark:text-blue-300 ml-6">
-              <strong>Versione Beta per Test:</strong> Questa è una versione di prova per insegnanti. 
-              I risultati dell'AI possono contenere errori, l'OCR può sbagliare nella trascrizione, 
-              e i dati non vengono salvati permanentemente (servirà un database nella versione finale).
-            </AlertDescription>
-          </Alert>
+      {showBetaBanner && (
+        <div className="bg-blue-50 dark:bg-blue-950/20 border-b border-blue-200 dark:border-blue-800 animate-in slide-in-from-top duration-300">
+          <div className="container px-4 py-2 relative">
+            <Alert className="border-0 bg-transparent p-0">
+              <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <AlertDescription className="text-sm text-blue-800 dark:text-blue-300 ml-6 pr-8">
+                <strong>Versione Beta per Test:</strong> Questa è una versione di prova per insegnanti. 
+                I risultati dell'AI possono contenere errori, l'OCR può sbagliare nella trascrizione, 
+                e i dati non vengono salvati permanentemente (servirà un database nella versione finale).
+              </AlertDescription>
+            </Alert>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCloseBetaBanner}
+              className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 p-0 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/20"
+              title="Chiudi questo avviso"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

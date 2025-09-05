@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Upload, FileText, Check, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ArrowRight, Upload, FileText, Check, Loader2, Info } from 'lucide-react';
 import { Dropzone } from '../Dropzone';
 import { PageList } from '../PageList';
 import type { Page } from '@/types';
@@ -37,6 +38,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
   const getStatusInfo = () => {
     if (!hasPages) return { icon: Upload, text: 'Carica le pagine del tuo libro', color: 'text-muted-foreground' };
     if (isProcessingOCR) return { icon: Loader2, text: `Elaborando ${completedPages}/${totalPages} pagine...`, color: 'text-primary' };
+    if (allCompleted && canMerge) return { icon: Check, text: 'Pronto! Clicca "Procedi" per continuare', color: 'text-green-600' };
     if (allCompleted) return { icon: Check, text: 'Tutte le pagine sono pronte!', color: 'text-green-600' };
     return { icon: FileText, text: `${completedPages}/${totalPages} completate`, color: 'text-orange-600' };
   };
@@ -56,6 +58,17 @@ export const UploadStep: React.FC<UploadStepProps> = ({
         </div>
 
       </div>
+
+      {/* Next Step Guidance */}
+      {hasPages && canMerge && (
+        <Alert className="bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800">
+          <Info className="h-4 w-4 text-green-600 dark:text-green-400" />
+          <AlertDescription className="text-sm text-green-800 dark:text-green-300">
+            <strong>Perfetto!</strong> Le tue pagine sono state trascritte. 
+            Ora clicca <strong>"Procedi"</strong> per unire il testo e passare alla fase di modifica.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -103,8 +116,13 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                     Pagine ({totalPages})
                   </h3>
                   {canMerge && (
-                    <Button size="sm" variant="outline" onClick={onMergeText}>
-                      Unisci Testo
+                    <Button 
+                      size="sm" 
+                      onClick={onMergeText}
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                    >
+                      <ArrowRight className="w-3 h-3 mr-1" />
+                      Procedi
                     </Button>
                   )}
                 </div>
@@ -135,6 +153,22 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                     </div>
                   ))}
                 </div>
+
+                {/* Mobile: Prominent Next Step Button */}
+                {canMerge && (
+                  <div className="mt-4 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                    <div className="text-center space-y-2">
+                      <p className="text-sm font-medium text-primary">Pronto per il prossimo passo!</p>
+                      <Button 
+                        onClick={onMergeText}
+                        className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                      >
+                        <ArrowRight className="w-4 h-4 mr-2" />
+                        Unisci Testo e Procedi
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
